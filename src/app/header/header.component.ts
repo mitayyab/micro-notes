@@ -6,5 +6,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
-
+  isNavbarExpanded:boolean = false;
+  
+  toggleNavbar()
+  {
+    this.isNavbarExpanded = !this.isNavbarExpanded;
+  }
 }
