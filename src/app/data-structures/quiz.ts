@@ -1,12 +1,3 @@
-export class PersonInfo{
-    name : string = "";
-    email : string = "";
-
-    constructor(name : string, email : string) {
-        this.name = name;
-        this.email = email;        
-    }
-}
 export class Option{
     possible_answer : string = "";
     correct : boolean = false;
