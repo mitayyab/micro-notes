@@ -7,7 +7,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { HomeComponent } from './home/home.component';
-import { DisplayQuizzesComponent } from './display-quizzes/display-quizzes.component';
+import { ListComponent } from './quiz/list/list.component';
+import { QuestionComponent } from './quiz/question/question.component';
+import { ResultComponent } from './quiz/result/result.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +17,9 @@ import { DisplayQuizzesComponent } from './display-quizzes/display-quizzes.compo
     HeaderComponent,
     FooterComponent,
     HomeComponent,
-    DisplayQuizzesComponent,
+    ListComponent,
+    QuestionComponent,
+    ResultComponent,
   ],
   imports: [
     BrowserModule,
