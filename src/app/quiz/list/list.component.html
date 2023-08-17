@@ -1,1 +1,65 @@
-<p>list works!</p>
+<div class="container mt-5">
+  <h2 class="mb-4">Available Quizzes</h2>
+
+  <!-- Input for filtering quizzes -->
+  <input
+    type="text"
+    class="form-control mb-4"
+    placeholder="Filter quizzes..."
+  />
+
+  <div class="d-flex flex-column gap-3">
+    <!-- Quiz Entry -->
+    <div class="card">
+      <div class="card-body">
+        <div class="d-md-flex justify-content-between align-items-center mb-2">
+          <h5>Introduction to Web Development</h5>
+          <span class="badge bg-secondary">10 Questions</span>
+        </div>
+
+        <div class="d-md-flex justify-content-between">
+          <div>
+            <p class="mb-md-4 text-muted">
+              A beginner's guide to understanding the basics of web development.
+            </p>
+            <div class="d-flex flex-wrap gap-2">
+              <span class="badge bg-success">HTML</span>
+              <span class="badge bg-success">CSS</span>
+              <span class="badge bg-success">JavaScript</span>
+            </div>
+          </div>
+          <button class="btn btn-primary align-self-end mt-3 mt-md-0">
+            Start
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quiz Entry -->
+    <div class="card">
+      <div class="card-body">
+        <div class="d-md-flex justify-content-between align-items-center mb-2">
+          <h5>Advanced JavaScript Concepts</h5>
+          <span class="badge bg-secondary">15 Questions</span>
+        </div>
+
+        <div class="d-md-flex justify-content-between">
+          <div>
+            <p class="mb-md-4 text-muted">
+              Dive deep into the intricacies of JavaScript and explore advanced
+              topics.
+            </p>
+            <div class="d-flex flex-wrap gap-2">
+              <span class="badge bg-success">Closures</span>
+              <span class="badge bg-success">Promises</span>
+              <span class="badge bg-success">Async/Await</span>
+            </div>
+          </div>
+          <button class="btn btn-primary align-self-end mt-3 mt-md-0">
+            Start
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
