@@ -1,6 +1,7 @@
 export class Option{
     possible_answer : string = "";
     correct : boolean = false;
+    selected: boolean = false;
 
     constructor(possible_answer : string, correct : boolean) {
         this.possible_answer = possible_answer;
@@ -10,12 +11,10 @@ export class Option{
 export class Question {
     statement: string = "";
     options: Option[] = [];
-    attempted: boolean = false;
   
     constructor (statement: string, options: Option[]) {
         this.statement = statement;
         this.options = options;
-
 
         if(this.correctOptionCount() > 1) {
             throw new Error('Cannot have more than 1 correct option');
@@ -25,6 +24,10 @@ export class Question {
 
     correctOptionCount() : number {
         return this.options.reduce(((correctCount, option) => option.correct ? correctCount+1: correctCount), 0);
+    }
+
+    isAttempted() : boolean{
+        return this.options.some(option => option.selected);
     }
   }
   
@@ -38,10 +41,10 @@ export class Question {
     }
 
     isComplete() : boolean {
-        return this.questions.every((q:Question) => q.attempted);
+        return this.questions.every((q:Question) => q.isAttempted);
     }
 
     attemptedCount() : number{
-        return this.questions.reduce(((count: number, q: Question)=>q.attempted ? count+1 : count),0);
+        return this.questions.reduce(((count: number, q: Question)=>q.isAttempted() ? count+1 : count),0);
     }
   }
