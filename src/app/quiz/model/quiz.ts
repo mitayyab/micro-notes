@@ -39,6 +39,7 @@ export class Question {
     subject: string = "";
     information: string = "";
     questions: Question[] = [];
+    finished: boolean = false;
 
     constructor (subject: string, information: string, questions: Question[]) {
         this.subject = subject;
