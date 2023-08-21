@@ -6,13 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
-  isHovering : boolean = false;
-  
-  hoverStart(){
-    this.isHovering = true;
-  }
 
-  hoverEnd(){
-    this.isHovering = false;
-  }
 }
