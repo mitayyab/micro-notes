@@ -1,1 +1,61 @@
-<p>result works!</p>
+<div class="card text-bg-light m-3">
+  <div class="card-header fs-3 fw-medium">{{getQuizSubject()}}</div>
+  <div class="card-body">
+    <p class="card-text mt-3">{{getQuizInformation()}}</p>
+    <hr class="dashed"/>
+    <div class="d-flex justify-content-between fs-4 fw-semibold">
+      <span>Total # of Questions</span>
+      <span class="rounded">{{getTotalQuizQuestions()}}</span>
+    </div>
+    <hr class="dashed"/>
+    <div class="d-flex justify-content-between fs-4 fw-semibold">
+      <span>Correct Answers</span>
+      <span class="bg-success rounded text-white px-2 ">{{getCorrectAnsweredQuestions()}}</span>
+    </div>
+    <hr class="dashed"/>
+    <div class="d-flex justify-content-between fs-4 fw-semibold">
+      <span>Incorrect Answers</span>
+      <span class="bg-danger rounded text-white px-2 ">{{getIncorrectAnsweredQuestions()}}</span>
+    </div>
+    <hr class="dashed"/>
+    <div class="d-flex justify-content-between fs-4 fw-semibold">
+      <span>Score(Percentage)</span>
+      <span class="bg-success rounded text-white px-2 ">{{getResultInPercentage()}}%</span>
+    </div>
+    <hr class="dashed"/>
+    <div class="d-flex justify-content-end ">
+        <a href="#" class="btn btn-primary">
+            Review My Quiz
+            <i class="fa-solid fa-eye mx-2"></i>
+        </a>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+    <div class="column-gap-3 border border-light-subtle p-3 .text-dark fw-medium mb-3"
+    *ngFor="let question of quiz?.questions"> 
+        <div class="fs-4 fw-bold my-4">{{question?.statement}}</div>
+        <div *ngFor="let option of question?.options">
+            <ng-template [ngIf]="option.correct === true">
+                <div class="d-flex justify-content-between p-3 .text-dark fw-medium mb-3 border border-success">
+                    {{option?.possible_answer}}
+                    <i class="fa-solid fa-circle-check fa-lg fa-fw" style="color: #20d544; margin-top: 10px;"></i>
+                </div>
+            </ng-template>
+            <ng-template [ngIf]="option.correct === false && option.selected === true">
+                <div class="d-flex justify-content-between p-3 .text-dark fw-medium mb-3 border border-danger">
+                    {{option?.possible_answer}}
+                    <i class="fa-solid fa-circle-xmark fa-lg fa-fw" style="color: #d71414; margin-top: 10px;"></i>
+                </div>
+            </ng-template>
+            <ng-template [ngIf]="option.correct === false && option.selected === false">
+                <div class="d-flex justify-content-between border border-light-subtle p-3 .text-dark fw-medium mb-3 ">
+                    {{option?.possible_answer}}
+                </div>
+            </ng-template>
+        </div>
+       
+    </div>
+</div>
+      

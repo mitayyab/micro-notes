@@ -25,8 +25,7 @@
     <input
       class="form-check-input"
       type="checkbox"
-      value=""
-      id="flexCheckDefault"
+      [(ngModel)]="option.selected"
     />
     <label class="form-check-label" for="flexCheckDefault">
       {{ option.possible_answer }}
@@ -38,8 +37,12 @@
       Previous
     </button>
     <button type="button" class="btn btn-primary" (click)="getNextQuestion()">
-      {{ getNextBtnMsg() }}
+      Next
       <i class="fa-solid fa-arrow-right"></i>
+    </button>
+    <button type="button" class="btn btn-success" (click)="getFinishQuiz()">
+      <i class="fa-solid fa-flag-checkered"></i>
+      Finish
     </button>
   </div>
 </div>

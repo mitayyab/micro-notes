@@ -14,7 +14,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
   quiz?: Quiz;
   question?: Question;
-  nextBtnMsg: string = 'Next';
+  // disableNext: boolean = false;
+  // disablePrev: boolean = true;
+  // disableFinish: boolean = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -45,15 +47,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
     return 0;
   }
 
-  getNextBtnMsg(): string {
-    if (this.quiz?.attemptedCount() == this.quiz?.questions.length) {
-      this.nextBtnMsg = 'Finish';
-    } else {
-      this.nextBtnMsg = 'Next';
-    }
-    return this.nextBtnMsg;
-  }
-
   getNextQuestion(): void {
     const routeParams = this.route.snapshot.paramMap;
 
@@ -65,7 +58,11 @@ export class QuestionComponent implements OnInit, OnDestroy {
       this.quiz.questions &&
       questionId + 1 < this.quiz?.questions.length
     ) {
+      // this.disableNext = false;
       this.router.navigate(['quizes', quizId, 'questions', questionId + 1]);
+    }
+    else {
+      // this.disableNext = true;
     }
   }
 
@@ -76,7 +73,27 @@ export class QuestionComponent implements OnInit, OnDestroy {
     const questionId = Number(routeParams.get('questionID'));
 
     if (questionId - 1 >= 0) {
+      // this.disablePrev = false;
       this.router.navigate(['quizes', quizId, 'questions', questionId - 1]);
+    }
+    else
+    {
+      // this.disablePrev = true;
+    }
+  }
+
+  getFinishQuiz() : void {
+    const routeParams = this.route.snapshot.paramMap;
+
+    const quizId = Number(routeParams.get('quizID'));
+
+    if (
+      this.quiz &&
+      this.quiz.questions &&
+      this.quiz.attemptedCount() == this.quiz.questions.length
+    ) {
+      // this.disableFinish = false;
+      this.router.navigate(['quizes', quizId, 'result']);
     }
   }
 }

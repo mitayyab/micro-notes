@@ -7,7 +7,7 @@ import { Quiz, Question, Option } from 'src/app/quiz/model/quiz';
 export class QuizzesService {
   readonly quizes: Quiz[] = 
   [
-    new Quiz('Pakistan', [
+    new Quiz('Pakistan', 'A quiz based on titles given to major cities of Pakistan',[
       new Question(
         'Which city is the capital of Pakistan?', 
       [
@@ -31,9 +31,9 @@ export class QuizzesService {
         new Option('Faisalabad', false),
       ]),
     ]),
-    new Quiz('Ibrahim', [
+    new Quiz('Ibrahim', 'A quiz based on LALA',[
       new Question(
-        'Which University he studied in?', 
+        'Which University he studied in?',  
       [
         new Option('GIKI', false),
         new Option('FAST', true),

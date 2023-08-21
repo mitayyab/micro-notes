@@ -29,14 +29,20 @@ export class Question {
     isAttempted() : boolean{
         return this.options.some(option => option.selected);
     }
+
+    isCorrectlyAnswered() : boolean {
+        return this.options.every((option)=>option.correct == option.selected);
+    }
   }
   
   export class Quiz {
     subject: string = "";
+    information: string = "";
     questions: Question[] = [];
 
-    constructor (subject: string, questions: Question[]) {
+    constructor (subject: string, information: string, questions: Question[]) {
         this.subject = subject;
+        this.information = information;
         this.questions = questions;
     }
 
@@ -46,5 +52,9 @@ export class Question {
 
     attemptedCount() : number{
         return this.questions.reduce(((count: number, q: Question)=>q.isAttempted() ? count+1 : count),0);
+    }
+
+    correctAnsweredCount() : number{
+        return this.questions.reduce((count, question)=> question.isCorrectlyAnswered() ? count+1 : count, 0);
     }
   }

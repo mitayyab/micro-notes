@@ -10,6 +10,7 @@ import { HomeComponent } from './home/home.component';
 import { ListComponent } from './quiz/list/list.component';
 import { QuestionComponent } from './quiz/question/question.component';
 import { ResultComponent } from './quiz/result/result.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { ResultComponent } from './quiz/result/result.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    NgbModule
+    NgbModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
