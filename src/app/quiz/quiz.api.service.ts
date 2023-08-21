@@ -24,7 +24,7 @@ export class QuizzesService {
         ]
       ),
       new Question(
-        "Which planet is known as the 'city of lights'?", 
+        "Which city is known as the 'city of lights'?", 
       [
         new Option('Karachi', true),
         new Option('Islamabad', false),
