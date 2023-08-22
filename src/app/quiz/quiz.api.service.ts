@@ -5,9 +5,10 @@ import { Quiz, Question, Option } from 'src/app/quiz/model/quiz';
   providedIn: 'root',
 })
 export class QuizzesService {
-  readonly quizes: Quiz[] = 
+  private quizes: Quiz[] = 
   [
-    new Quiz('Pakistan', 'A quiz based on titles given to major cities of Pakistan',[
+    new Quiz('Pakistan', 'A quiz based on titles given to major cities of Pakistan', ['culture', 'title Of Cities'],
+    [
       new Question(
         'Which city is the capital of Pakistan?', 
       [
@@ -31,7 +32,8 @@ export class QuizzesService {
         new Option('Faisalabad', false),
       ]),
     ]),
-    new Quiz('Ibrahim', 'A quiz based on LALA',[
+    new Quiz('Ibrahim', 'A quiz based on LALA', ['Univrsity', 'Everyday Questions'],
+    [
       new Question(
         'Which University he studied in?',  
       [
@@ -56,6 +58,10 @@ export class QuizzesService {
       ]),
     ])
   ];
+
+  getQuizes(): Quiz[] {
+    return this.quizes;
+  }
 
   getQuiz(quizId : number): Quiz {
     return this.quizes[quizId];

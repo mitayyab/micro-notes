@@ -56,12 +56,14 @@ export class Question {
   export class Quiz {
     subject: string = "";
     information: string = "";
+    topics: string[] = [];
     questions: Question[] = [];
     finished: boolean = false;
 
-    constructor (subject: string, information: string, questions: Question[]) {
+    constructor (subject: string, information: string, topics: string[], questions: Question[]) {
         this.subject = subject;
         this.information = information;
+        this.topics = topics;
         this.questions = questions;
     }
 
