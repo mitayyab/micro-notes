@@ -1,3 +1,15 @@
-.possible-answer-shadow:hover {
+.option:hover {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.option.correct > i.answer-state {
+    color: #20d544;
+}
+
+.option.in-correct > i.answer-state {
+    color: #d71414;
+}
+
+.option.not-chosen > i.answer-state {
+    visibility: hidden;
 }

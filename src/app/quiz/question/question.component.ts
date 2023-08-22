@@ -1,100 +1,155 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Quiz, Question } from '../model/quiz';
+import { Quiz, Question, Option, AnswerState } from '../model/quiz';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuizzesService } from '../quiz.api.service';
 import { Subscription } from 'rxjs';
+import * as _ from 'lodash';
 
 @Component({
-  selector: 'app-question',
-  templateUrl: './question.component.html',
-  styleUrls: ['./question.component.css'],
+    selector: 'app-question',
+    templateUrl: './question.component.html',
+    styleUrls: ['./question.component.css'],
 })
 export class QuestionComponent implements OnInit, OnDestroy {
-  private paramsSubscription?: Subscription;
+    private paramsSubscription?: Subscription;
 
-  quiz?: Quiz;
-  question?: Question;
-  // disableNext: boolean = false;
-  // disablePrev: boolean = true;
-  // disableFinish: boolean = true;
+    quiz?: Quiz;
+    question?: Question;
+    btnWords: string = 'Finish';
 
-  constructor(
-    private route: ActivatedRoute,
-    private quizApi: QuizzesService,
-    private router: Router
-  ) {}
+    constructor(
+        private route: ActivatedRoute,
+        private quizApi: QuizzesService,
+        private router: Router
+    ) {}
 
-  ngOnInit(): void {
-    this.paramsSubscription = this.route.params.subscribe((params) => {
-      const quizId = Number(params['quizID']);
-      const questionId = Number(params['questionID']);
+    ngOnInit(): void {
+        this.paramsSubscription = this.route.params.subscribe((params) => {
+            const quizId = Number(params['quizID']);
+            const questionId = Number(params['questionID']);
 
-      const { quiz, question } = this.quizApi.getQuestion(quizId, questionId);
+            const { quiz, question } = this.quizApi.getQuestion(
+                quizId,
+                questionId
+            );
 
-      this.quiz = quiz;
-      this.question = question;
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.paramsSubscription?.unsubscribe();
-  }
-
-  getProgress(): number {
-    if (this.quiz) {
-      return (this.quiz.attemptedCount() / this.quiz.questions.length) * 100;
+            this.quiz = quiz;
+            this.question = question;
+        });
     }
-    return 0;
-  }
 
-  getNextQuestion(): void {
-    const routeParams = this.route.snapshot.paramMap;
-
-    const quizId = Number(routeParams.get('quizID'));
-    const questionId = Number(routeParams.get('questionID'));
-
-    if (
-      this.quiz &&
-      this.quiz.questions &&
-      questionId + 1 < this.quiz?.questions.length
-    ) {
-      // this.disableNext = false;
-      this.router.navigate(['quizes', quizId, 'questions', questionId + 1]);
+    ngOnDestroy(): void {
+        this.paramsSubscription?.unsubscribe();
     }
-    else {
-      // this.disableNext = true;
+
+    getProgress(): number {
+        if (this.quiz) {
+            return (
+                (this.quiz.attemptedCount() / this.quiz.questions.length) * 100
+            );
+        }
+        return 0;
     }
-  }
 
-  getPrevQuestion(): void {
-    const routeParams = this.route.snapshot.paramMap;
+    showNextBtn(): boolean {
+      const routeParams = this.route.snapshot.paramMap;
 
-    const quizId = Number(routeParams.get('quizID'));
-    const questionId = Number(routeParams.get('questionID'));
+      const questionId = Number(routeParams.get('questionID'));
 
-    if (questionId - 1 >= 0) {
-      // this.disablePrev = false;
-      this.router.navigate(['quizes', quizId, 'questions', questionId - 1]);
+      if ( this.quiz && this.quiz.questions && (questionId + 1 < this.quiz?.questions.length) ) {
+        return true;
+      } 
+
+      return false;
     }
-    else
-    {
-      // this.disablePrev = true;
+
+    getNextQuestion(): void {
+        const routeParams = this.route.snapshot.paramMap;
+
+        const quizId = Number(routeParams.get('quizID'));
+        const questionId = Number(routeParams.get('questionID'));
+        
+        if ( this.quiz && this.quiz.questions && questionId + 1 < this.quiz?.questions.length ) {
+            this.router.navigate(['quizes',  quizId,  'questions', questionId + 1, ]);
+        } 
     }
-  }
 
-  getFinishQuiz() : void {
-    const routeParams = this.route.snapshot.paramMap;
+    showPrevBtn() : boolean {
+      const routeParams = this.route.snapshot.paramMap;
 
-    const quizId = Number(routeParams.get('quizID'));
+      const questionId = Number(routeParams.get('questionID'));
+      
+      if (this.quiz && this.quiz.questions && questionId > 0) {
+        return true;
+      } 
 
-    if (
-      this.quiz &&
-      this.quiz.questions &&
-      this.quiz.attemptedCount() == this.quiz.questions.length
-    ) {
-      // this.disableFinish = false;
-      this.router.navigate(['quizes', quizId, 'result']);
+      return false;
     }
-  }
+
+    getPrevQuestion(): void {
+        const routeParams = this.route.snapshot.paramMap;
+
+        const quizId = Number(routeParams.get('quizID'));
+        const questionId = Number(routeParams.get('questionID'));
+
+        if (this.quiz && this.quiz.questions && questionId - 1 >= 0) {
+            this.router.navigate(['quizes', quizId, 'questions', questionId - 1, ]);
+        } 
+    }
+
+    finishQuizAndShowResult(): void {
+        const routeParams = this.route.snapshot.paramMap;
+        const quizId = Number(routeParams.get('quizID'));
+
+        if (
+            this.quiz && this.quiz.isComplete()
+        ) {
+            this.quiz.finished = true;
+            this.router.navigate(['quizes', quizId, 'result']);
+        }
+    }
+
+    toShowResultButton(): boolean{
+      return (this.quiz?.isComplete() && !this.quiz?.finished) || false;
+    }
+
+    getAnswerStateClass(option: Option) {
+        return this.quiz?.finished
+            ? _.kebabCase(AnswerState[option.getState()])
+            : '';
+    }
+
+    getAnswerStateIconClass(option: Option) {
+        let className = '';
+
+        if (this.quiz?.finished) {
+            switch (option.getState()) {
+                case AnswerState.Correct:
+                    className = 'fa-circle-check';
+                    break;
+                case AnswerState.InCorrect:
+                    className = 'fa-circle-xmark';
+                    break;
+            }
+        }
+
+        return className;
+    }
+
+    getAnswerStateBorderClass(option: Option) {
+        let className = '';
+
+        if (this.quiz?.finished) {
+            switch (option.getState()) {
+                case AnswerState.Correct:
+                    className = 'border-success';
+                    break;
+                case AnswerState.InCorrect:
+                    className = 'border-danger';
+                    break;
+            }
+        }
+
+        return className;
+    }
 }
-

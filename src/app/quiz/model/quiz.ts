@@ -1,3 +1,9 @@
+export enum AnswerState {
+    Correct,
+    InCorrect,
+    NotChosen
+  }
+
 export class Option{
     possible_answer : string = "";
     correct : boolean = false;
@@ -6,6 +12,18 @@ export class Option{
     constructor(possible_answer : string, correct : boolean) {
         this.possible_answer = possible_answer;
         this.correct = correct;        
+    }
+
+    getState() : AnswerState {
+        let state = AnswerState.NotChosen; 
+
+        if (this.selected) {
+            state = this.correct ? AnswerState.Correct : AnswerState.InCorrect; 
+        } else if (this.correct){
+            state = AnswerState.Correct;
+        }
+
+        return state;
     }
 }
 export class Question {
@@ -48,7 +66,7 @@ export class Question {
     }
 
     isComplete() : boolean {
-        return this.questions.every((q:Question) => q.isAttempted);
+        return this.questions.every((q:Question) => q.isAttempted());
     }
 
     attemptedCount() : number{

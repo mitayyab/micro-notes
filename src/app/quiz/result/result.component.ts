@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { QuizzesService } from '../quiz.api.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Quiz } from '../model/quiz';
 
 @Component({
@@ -11,7 +11,7 @@ import { Quiz } from '../model/quiz';
 export class ResultComponent {
   quiz?: Quiz;
 
-  constructor(private quizApi: QuizzesService, private route: ActivatedRoute) {}
+  constructor(private quizApi: QuizzesService, private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
     const quizIdParam = this.route.snapshot.paramMap.get('quizID');
@@ -62,9 +62,20 @@ export class ResultComponent {
 
   getResultInPercentage() : number {
     if (this.quiz) {
-      return (this.getCorrectAnsweredQuestions()/this.getIncorrectAnsweredQuestions()) * 100;
+      return (this.getCorrectAnsweredQuestions()/this.getTotalQuizQuestions()) * 100;
     } else {
       return 0;
     }
+  }
+
+  getResultIn1Decimal() : number{
+    return Number(this.getResultInPercentage().toFixed(1));
+  }
+
+  reviewQuiz()
+  {
+    const quizId = this.route.snapshot.paramMap.get('quizID');
+
+    this.router.navigate(['quizes', quizId, 'questions', 0]);
   }
 }

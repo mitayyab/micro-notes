@@ -20,11 +20,11 @@
     <hr class="dashed"/>
     <div class="d-flex justify-content-between fs-4 fw-semibold">
       <span>Score(Percentage)</span>
-      <span class="bg-success rounded text-white px-2 ">{{getResultInPercentage()}}%</span>
+      <span class="bg-success rounded text-white px-2 ">{{getResultIn1Decimal()}}%</span>
     </div>
     <hr class="dashed"/>
     <div class="d-flex justify-content-end ">
-        <a href="#" class="btn btn-primary">
+        <a class="btn btn-primary" (click)="reviewQuiz()">
             Review My Quiz
             <i class="fa-solid fa-eye mx-2"></i>
         </a>
@@ -55,7 +55,6 @@
                 </div>
             </ng-template>
         </div>
-       
     </div>
 </div>
       
