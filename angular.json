@@ -5,7 +5,11 @@
    "projects": {
       "Angular-Quiz-App": {
          "projectType": "application",
-         "schematics": {},
+         "schematics": {
+            "@schematics/angular:component": {
+               "style": "scss"
+            }
+         },
          "root": "",
          "sourceRoot": "src",
          "prefix": "app",
@@ -18,11 +22,9 @@
                   "main": "src/main.ts",
                   "polyfills": ["zone.js"],
                   "tsConfig": "tsconfig.app.json",
+                  "inlineStyleLanguage": "scss",
                   "assets": ["src/favicon.ico", "src/assets"],
-                  "styles": [
-                     "node_modules/bootstrap/dist/css/bootstrap.min.css",
-                     "src/styles.css"
-                  ],
+                  "styles": ["src/styles.scss"],
                   "scripts": []
                },
                "configurations": {
@@ -75,8 +77,9 @@
                "options": {
                   "polyfills": ["zone.js", "zone.js/testing"],
                   "tsConfig": "tsconfig.spec.json",
+                  "inlineStyleLanguage": "scss",
                   "assets": ["src/favicon.ico", "src/assets"],
-                  "styles": ["src/styles.css"],
+                  "styles": ["src/styles.scss"],
                   "scripts": []
                }
             }
