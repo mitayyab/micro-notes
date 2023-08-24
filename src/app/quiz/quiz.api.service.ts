@@ -68,6 +68,10 @@ export class QuizzesService {
   }
 
   getQuestion(quizId : number, questionId : number) {
+    if (quizId === undefined || questionId === undefined) {
+      throw new Error('quizId & questionId cannot be null');
+    }
+ 
     const quiz = this.quizes[quizId]; 
 
     return {

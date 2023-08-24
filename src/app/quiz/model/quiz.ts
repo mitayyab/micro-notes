@@ -33,15 +33,7 @@ export class Question {
     constructor (statement: string, options: Option[]) {
         this.statement = statement;
         this.options = options;
-
-        if(this.correctOptionCount() > 1) {
-            throw new Error('Cannot have more than 1 correct option');
-        }
         
-    }
-
-    correctOptionCount() : number {
-        return this.options.reduce(((correctCount, option) => option.correct ? correctCount+1: correctCount), 0);
     }
 
     isAttempted() : boolean{
@@ -77,5 +69,5 @@ export class Question {
 
     correctAnsweredCount() : number{
         return this.questions.reduce((count, question)=> question.isCorrectlyAnswered() ? count+1 : count, 0);
-    }
+    } 
   }

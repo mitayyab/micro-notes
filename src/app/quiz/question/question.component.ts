@@ -15,7 +15,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
     quiz?: Quiz;
     question?: Question;
-    btnWords: string = 'Finish';
 
     constructor(
         private route: ActivatedRoute,
@@ -52,15 +51,19 @@ export class QuestionComponent implements OnInit, OnDestroy {
     }
 
     showNextBtn(): boolean {
-      const routeParams = this.route.snapshot.paramMap;
+        const routeParams = this.route.snapshot.paramMap;
 
-      const questionId = Number(routeParams.get('questionID'));
+        const questionId = Number(routeParams.get('questionID'));
 
-      if ( this.quiz && this.quiz.questions && (questionId + 1 < this.quiz?.questions.length) ) {
-        return true;
-      } 
+        if (
+            this.quiz &&
+            this.quiz.questions &&
+            questionId + 1 < this.quiz?.questions.length
+        ) {
+            return true;
+        }
 
-      return false;
+        return false;
     }
 
     getNextQuestion(): void {
@@ -68,22 +71,31 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
         const quizId = Number(routeParams.get('quizID'));
         const questionId = Number(routeParams.get('questionID'));
-        
-        if ( this.quiz && this.quiz.questions && questionId + 1 < this.quiz?.questions.length ) {
-            this.router.navigate(['quizes',  quizId,  'questions', questionId + 1, ]);
-        } 
+
+        if (
+            this.quiz &&
+            this.quiz.questions &&
+            questionId + 1 < this.quiz?.questions.length
+        ) {
+            this.router.navigate([
+                'quizes',
+                quizId,
+                'questions',
+                questionId + 1,
+            ]);
+        }
     }
 
-    showPrevBtn() : boolean {
-      const routeParams = this.route.snapshot.paramMap;
+    showPrevBtn(): boolean {
+        const routeParams = this.route.snapshot.paramMap;
 
-      const questionId = Number(routeParams.get('questionID'));
-      
-      if (this.quiz && this.quiz.questions && questionId > 0) {
-        return true;
-      } 
+        const questionId = Number(routeParams.get('questionID'));
 
-      return false;
+        if (this.quiz && this.quiz.questions && questionId > 0) {
+            return true;
+        }
+
+        return false;
     }
 
     getPrevQuestion(): void {
@@ -93,24 +105,27 @@ export class QuestionComponent implements OnInit, OnDestroy {
         const questionId = Number(routeParams.get('questionID'));
 
         if (this.quiz && this.quiz.questions && questionId - 1 >= 0) {
-            this.router.navigate(['quizes', quizId, 'questions', questionId - 1, ]);
-        } 
+            this.router.navigate([
+                'quizes',
+                quizId,
+                'questions',
+                questionId - 1,
+            ]);
+        }
     }
 
     finishQuizAndShowResult(): void {
         const routeParams = this.route.snapshot.paramMap;
         const quizId = Number(routeParams.get('quizID'));
 
-        if (
-            this.quiz && this.quiz.isComplete()
-        ) {
+        if (this.quiz && this.quiz.isComplete()) {
             this.quiz.finished = true;
             this.router.navigate(['quizes', quizId, 'result']);
         }
     }
 
-    toShowResultButton(): boolean{
-      return (this.quiz?.isComplete() && !this.quiz?.finished) || false;
+    toShowResultButton(): boolean {
+        return (this.quiz?.isComplete() && !this.quiz?.finished) || false;
     }
 
     getAnswerStateClass(option: Option) {
