@@ -16,10 +16,10 @@ describe('AppComponent', () => {
       expect(app).toBeTruthy();
    });
 
-   it(`should have as title 'Angular-Quiz-App'`, () => {
-         const fixture = TestBed.createComponent(AppComponent);
+   it(`should have as title 'Ibrahim Notes'`, () => {
+      const fixture = TestBed.createComponent(AppComponent);
       const app = fixture.componentInstance;
-      expect(app.title).toEqual('Angular-Quiz-App');
+      expect(app.title).toEqual('Ibrahim Notes');
    });
 
    it('should render title', () => {
@@ -27,7 +27,7 @@ describe('AppComponent', () => {
       fixture.detectChanges();
       const compiled = fixture.nativeElement as HTMLElement;
       expect(compiled.querySelector('.content span')?.textContent).toContain(
-         'Angular-Quiz-App app is running!',
+         'Ibrahim Notes app is running!',
       );
    });
 });

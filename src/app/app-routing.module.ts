@@ -7,6 +7,14 @@ const routes: Routes = [
       path: '',
       component: HomeComponent,
    },
+   {
+      path: 'notes',
+      component: HomeComponent,
+   },
+   {
+      path: 'quizzes',
+      component: HomeComponent,
+   },
 ];
 
 @NgModule({
