@@ -4,13 +4,13 @@ export enum AnswerState {
    NotChosen,
 }
 
-export class Option {
-   possible_answer: string = '';
-   correct: boolean = false;
+export class AnswerChoice {
+   readonly text: string = '';
+   readonly correct: boolean = false;
    selected: boolean = false;
 
-   constructor(possible_answer: string, correct: boolean) {
-      this.possible_answer = possible_answer;
+   constructor(text: string, correct: boolean) {
+      this.text = text;
       this.correct = correct;
    }
 
@@ -19,46 +19,47 @@ export class Option {
 
       if (this.selected) {
          state = this.correct ? AnswerState.Correct : AnswerState.InCorrect;
-      } else if (this.correct) {
-         state = AnswerState.Correct;
       }
 
       return state;
    }
 }
-export class Question {
-   statement: string = '';
-   options: Option[] = [];
 
-   constructor(statement: string, options: Option[]) {
-      this.statement = statement;
-      this.options = options;
+export class Question {
+   readonly text: string = '';
+   readonly answerChoices: AnswerChoice[] = [];
+
+   constructor(text: string, options: AnswerChoice[]) {
+      this.text = text;
+      this.answerChoices = options;
    }
 
    isAttempted(): boolean {
-      return this.options.some(option => option.selected);
+      return this.answerChoices.some(option => option.selected);
    }
 
    isCorrectlyAnswered(): boolean {
-      return this.options.every(option => option.correct == option.selected);
+      return this.answerChoices.every(
+         option => option.correct == option.selected,
+      );
    }
 }
 
 export class Quiz {
-   subject: string = '';
-   information: string = '';
-   topics: string[] = [];
-   questions: Question[] = [];
+   readonly title: string = '';
+   readonly description: string = '';
+   readonly topics: string[] = [];
+   readonly questions: Question[] = [];
    finished: boolean = false;
 
    constructor(
       subject: string,
-      information: string,
+      description: string,
       topics: string[],
       questions: Question[],
    ) {
-      this.subject = subject;
-      this.information = information;
+      this.title = subject;
+      this.description = description;
       this.topics = topics;
       this.questions = questions;
    }
@@ -67,18 +68,12 @@ export class Quiz {
       return this.questions.every((q: Question) => q.isAttempted());
    }
 
-   attemptedCount(): number {
-      return this.questions.reduce(
-         (count: number, q: Question) => (q.isAttempted() ? count + 1 : count),
-         0,
-      );
+   getAttemptedCount(): number {
+      return this.questions.filter((q: Question) => q.isAttempted()).length;
    }
 
-   correctAnsweredCount(): number {
-      return this.questions.reduce(
-         (count, question) =>
-            question.isCorrectlyAnswered() ? count + 1 : count,
-         0,
-      );
+   getCorrectlyAnsweredCount(): number {
+      return this.questions.filter((q: Question) => q.isCorrectlyAnswered())
+         .length;
    }
 }
