@@ -1,0 +1,23 @@
+{
+   "folders": [
+      {
+         "name": "frontend",
+         "path": "./frontend"
+      },
+      {
+         "name": "setup",
+         "path": "./"
+      }
+   ],
+   "settings": {
+      "editor.tabSize": 3,
+      "workbench.tree.indent": 24,
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnPaste": true,
+      "editor.formatOnSave": true,
+      "files.exclude": {
+         "frontend": true,
+         "backend": true
+      }
+   }
+}
