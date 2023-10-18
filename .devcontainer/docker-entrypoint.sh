@@ -9,9 +9,13 @@ chmod 600 ~/.ssh/id_*
 chmod 644 ~/.ssh/id_*.pub
 
 cd /micro-notes/frontend 
+rm -rf node_modules
 npm install
 
-# cd /micro-notes/backend
-# npm install
+cd /micro-notes/backend
+rm -rf node_modules
+npm install
+
+git config --global --add safe.directory /micro-notes
 
 tail -f /dev/null

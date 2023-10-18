@@ -22,6 +22,19 @@
       "files.exclude": {
          "frontend": true,
          "backend": true
-      }
+      },
+      "jest.autoRun": "off",
+      "jest.disabledWorkspaceFolders": ["frontend", "setup"],
+      "cSpell.ignorePaths": [
+         "package-lock.json",
+         "node_modules",
+         "vscode-extension",
+         ".git/objects",
+         ".vscode",
+         ".vscode-insiders",
+         "devcontainer.json",
+         ".git",
+         "project.code-workspace"
+      ]
    }
 }
