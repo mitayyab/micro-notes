@@ -5,6 +5,10 @@
          "path": "./frontend"
       },
       {
+         "name": "backend",
+         "path": "./backend"
+      },
+      {
          "name": "setup",
          "path": "./"
       }

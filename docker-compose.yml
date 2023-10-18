@@ -1,0 +1,56 @@
+version: '3.6'
+
+services:
+   mongo:
+      image: mongo
+      container_name: mongo
+      restart: unless-stopped
+      ports:
+         - 27017:27017
+      environment:
+         MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+         MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+         MONGO_INITDB_DATABASE: notes
+         MONGO_NOTES_PASSWORD: ${MONGO_NOTES_PASSWORD}
+      volumes:
+         - mongo_data:/data/db
+         - ./mongo/init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
+   mongo-express:
+      image: mongo-express
+      container_name: mongo-express
+      restart: always
+      ports:
+         - 8082:8082
+      environment:
+         ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_ROOT_USERNAME}
+         ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_ROOT_PASSWORD}
+         ME_CONFIG_MONGODB_URL: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongo:27017/
+      depends_on:
+         - mongo
+
+   mongo-gui:
+      container_name: mongo-gui
+      image: ugleiton/mongo-gui
+      restart: always
+      ports:
+         - '4321:4321'
+      environment:
+         - MONGO_URL=mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongo:27017/
+
+   micro-notes:
+      build:
+         context: .devcontainer
+         dockerfile: Dockerfile
+      container_name: micro-notes
+      ports:
+         - ${BACKEND_PORT}:${BACKEND_PORT}
+      environment:
+         SERVER_PORT: ${BACKEND_PORT}
+         MONGODB_URL: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongo:27017/
+      volumes:
+         - ~/.ssh:/tmp/.ssh:ro
+         - ./:/micro-notes:cached
+
+volumes:
+   mongo_data:

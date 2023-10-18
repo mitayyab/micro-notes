@@ -1,0 +1,35 @@
+{
+   "name": "micro-notes",
+   "dockerComposeFile": "../docker-compose.yml",
+   "service": "micro-notes",
+   "workspaceFolder": "/micro-notes",
+   "shutdownAction": "stopCompose",
+   "containerUser": "vscode",
+   "mounts": [
+      "source=vscode-extensions,target=/root/.vscode-server-insiders/extensions,type=volume"
+   ],
+   "customizations": {
+      "vscode": {
+         "extensions": [
+            "ms-vscode.vscode-typescript-next",
+            "angular.ng-template",
+            "esbenp.prettier-vscode",
+            "pranaygp.vscode-css-peek",
+            "eamodio.gitlens",
+            "VisualStudioExptTeam.vscodeintellicode",
+            "christian-kohler.path-intellisense",
+            "ms-azuretools.vscode-docker",
+            "vscode-icons-team.vscode-icons",
+            "formulahendry.auto-rename-tag",
+            "redhat.vscode-yaml",
+            "xabikos.JavaScriptSnippets",
+            "streetsidesoftware.code-spell-checker",
+            "christian-kohler.npm-intellisense",
+            "mikestead.dotenv",
+            "shd101wyy.markdown-preview-enhanced",
+            "Orta.vscode-jest",
+            "yoavbls.pretty-ts-errors"
+         ]
+      }
+   }
+}
