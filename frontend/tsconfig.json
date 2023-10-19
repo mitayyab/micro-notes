@@ -21,7 +21,7 @@
       "useDefineForClassFields": false,
       "lib": ["ES2022", "dom"],
       "paths": {
-         "@api-lib/*": ["./../my-notes-backend/src/lib/*"]
+         "@api-lib/*": ["./../backend/src/lib/*"]
       }
    },
    "angularCompilerOptions": {
