@@ -2,6 +2,9 @@
    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=827846
    "recommendations": [
       "ms-vscode-remote.remote-containers",
-      "ms-azuretools.vscode-docker"
+      "ms-vscode-remote.remote-wsl",
+      "formulahendry.auto-rename-tag",
+      "mikestead.dotenv",
+      "xabikos.JavaScriptSnippets"
    ]
 }

@@ -1,15 +1,20 @@
 FROM node:20-alpine
 
 ARG USERNAME=vscode
-ARG USER_UID=1010
+ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-# Create user and group
+# Change uid and gid of node user to avoid conflict
+RUN deluser --remove-home node \
+    && addgroup -S node -g 2000 \
+    && adduser -S -G node -u 2000 node
+
+# Create user and group with 1000 uid and gid as work around for ubuntu wsl
 RUN addgroup -g $USER_GID $USERNAME \
     && adduser -u $USER_UID -G $USERNAME -s /bin/sh -D $USERNAME
 
 # Install necessary packages
-RUN apk update && apk add --no-cache sudo bash git openssh
+RUN apk update && apk add --no-cache sudo bash git openssl openssh
 
 # Grant the user sudo privileges
 RUN echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME \
@@ -27,4 +32,4 @@ ENTRYPOINT ["/bin/docker-entrypoint.sh","/bin/bash"]
 USER $USERNAME
 
 # Set workdir
-WORKDIR /app
+WORKDIR /micro-notes

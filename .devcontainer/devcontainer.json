@@ -20,15 +20,14 @@
             "christian-kohler.path-intellisense",
             "ms-azuretools.vscode-docker",
             "vscode-icons-team.vscode-icons",
-            "formulahendry.auto-rename-tag",
             "redhat.vscode-yaml",
-            "xabikos.JavaScriptSnippets",
             "streetsidesoftware.code-spell-checker",
             "christian-kohler.npm-intellisense",
-            "mikestead.dotenv",
             "shd101wyy.markdown-preview-enhanced",
             "Orta.vscode-jest",
-            "yoavbls.pretty-ts-errors"
+            "yoavbls.pretty-ts-errors",
+            "yzhang.markdown-all-in-one",
+            "foxundermoon.shell-format"
          ]
       }
    }

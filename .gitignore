@@ -1,7 +1,16 @@
 # IDEs and editors
-.idea/
-.project
-*.sublime-workspace
+**/.idea/
+**/.project
+**/*.sublime-workspace
 
-node_modules
-.angular
+# Mac
+**/.DS_Store
+
+# Environment files
+**/.env
+**/.env.*
+
+# Node
+**/node_modules
+**/npm-debug.log
+**/yarn-error.log
