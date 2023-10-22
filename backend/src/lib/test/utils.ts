@@ -1,13 +1,25 @@
 import request, { Response } from 'supertest';
 import { Application } from 'express';
 
+import { createUser, deleteUser } from '@lib/user/user.testutils';
+
+export const testUser = {
+   firstName: 'Ibrahim',
+   lastName: 'Tayyab',
+   email: 'ibrahim@tayyab.dev',
+   password: 'test123',
+   isAdmin: false,
+};
+
 export const post = async (
    app: Application,
    path: string,
-   body: Record<string, any>
+   body: Record<string, any>,
+   cookie: string[] = [],
 ): Promise<Response> =>
    request(app)
       .post(path)
+      .set('Cookie', cookie)
       .send(body)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json');
@@ -15,5 +27,43 @@ export const post = async (
 export const del = async (
    app: Application,
    path: string,
-   cookie: string[] = []
+   cookie: string[] = [],
 ): Promise<Response> => request(app).delete(path).set('Cookie', cookie);
+
+export type Credentials = {
+   email: string;
+   password: string;
+};
+
+let cookie: string[];
+
+export const currentCookie = () => cookie;
+
+export const login = async (app: Application, credentials: Credentials) => {
+   const { email, password } = credentials;
+   const res = await post(app, '/session', {
+      username: email,
+      password,
+   });
+
+   cookie = res.headers['set-cookie'];
+
+   return res;
+};
+
+export const logout = async (app: Application) =>
+   await del(app, '/session', cookie);
+
+export const createUserAndLogin = async (
+   app: Application,
+   isAdmin: boolean = false,
+) => {
+   const { email, password } = testUser;
+   await createUser({ ...testUser, isAdmin });
+   await login(app, { email, password });
+};
+
+export const logoutAndDeleteUser = async (app: Application) => {
+   await logout(app);
+   await deleteUser(testUser.email);
+};

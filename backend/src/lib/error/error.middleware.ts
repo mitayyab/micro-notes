@@ -11,7 +11,7 @@ function mapErrorTypeToHttpCodes() {
    mapping[Type.INVALID_INPUT] = 400;
    mapping[Type.UNAUTHORIZED] = 401;
    mapping[Type.FORBIDDEN] = 403;
-   mapping[Type.UNIQUE_FIELD_VOILATION] = 409;
+   mapping[Type.UNIQUE_FIELD_VIOLATION] = 409;
 
    return mapping;
 }
@@ -20,7 +20,7 @@ export const mongoDatabaseErrorHandler: ErrorRequestHandler = async (
    error: MongoServerError,
    req: Request,
    res: Response,
-   next: NextFunction
+   next: NextFunction,
 ) => {
    if (error.name === 'MongoServerError') {
       switch (error.code) {
@@ -40,7 +40,7 @@ export const apiErrorHandler: ErrorRequestHandler = async (
    error: ApiError,
    req: Request,
    res: Response,
-   next: NextFunction
+   next: NextFunction,
 ) => {
    const status = httpErrors[error.type] || 500;
 

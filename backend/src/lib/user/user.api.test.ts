@@ -69,7 +69,7 @@ describe('/user', () => {
          expect(res.headers['set-cookie']).toBeUndefined();
          expect(res.body).toEqual({
             message: 'Record with same field already exists',
-            type: ErrorType.UNIQUE_FIELD_VOILATION,
+            type: ErrorType.UNIQUE_FIELD_VIOLATION,
             field: {
                email: 'ibrahim@tayyab.dev',
             },
