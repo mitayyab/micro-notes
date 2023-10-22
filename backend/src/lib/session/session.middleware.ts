@@ -6,7 +6,7 @@ import { User } from '@lib/user/user.model';
 export const ensureAuthenticated: RequestHandler = async (
    req: Request,
    res: Response,
-   next: NextFunction
+   next: NextFunction,
 ) => {
    if (req.isAuthenticated()) {
       return next();
@@ -18,7 +18,7 @@ export const ensureAuthenticated: RequestHandler = async (
 export const ensureAdmin: RequestHandler = async (
    req: Request,
    res: Response,
-   next: NextFunction
+   next: NextFunction,
 ) => {
    if (req.isAuthenticated() && (<User>req.user).isAdmin) {
       return next();
@@ -26,7 +26,7 @@ export const ensureAdmin: RequestHandler = async (
       next(
          req.isAuthenticated()
             ? new ApiError(Type.FORBIDDEN, 'User is not authorized')
-            : new ApiError(Type.UNAUTHORIZED, 'User needs to login.')
+            : new ApiError(Type.UNAUTHORIZED, 'User needs to login.'),
       );
    }
 };

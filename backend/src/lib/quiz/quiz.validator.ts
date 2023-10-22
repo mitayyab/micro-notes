@@ -17,10 +17,10 @@ const schema = Joi.object({
                   Joi.object({
                      text: Joi.string().empty().required(),
                      correct: Joi.boolean().required(),
-                  })
+                  }),
                )
                .min(2),
-         }).min(1)
+         }).min(1),
       )
       .min(1),
 });

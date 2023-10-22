@@ -9,7 +9,7 @@ import { ensureAuthenticated } from '@lib/session/session.middleware';
 const login: Handler = async (
    req: Request,
    res: Response,
-   next: NextFunction
+   next: NextFunction,
 ) => {
    const authHandler: AuthorizeCallback = (err, user: User) => {
       if (err) {
@@ -34,7 +34,7 @@ const login: Handler = async (
 const logout: Handler = async (
    req: Request,
    res: Response,
-   next: NextFunction
+   next: NextFunction,
 ) => {
    req.logout(err => next(err));
    res.json({ message: 'Logged out' });

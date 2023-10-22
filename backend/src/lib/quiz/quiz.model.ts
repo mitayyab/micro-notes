@@ -18,9 +18,9 @@ export interface Quiz extends Document {
             {
                text: string;
                correct: boolean;
-            }
+            },
          ];
-      }
+      },
    ];
 }
 
@@ -57,7 +57,7 @@ QuestionSchema.pre('save', function () {
 
 QuestionSchema.index(
    { text: 1, 'answerChoices.text': 1 },
-   { unique: true, sparse: true }
+   { unique: true, sparse: true },
 );
 
 export const schemaDefinition = {
@@ -75,7 +75,7 @@ const QuizSchema = new mongoose.Schema(schemaDefinition);
 
 QuizSchema.index(
    { title: 1, 'questions.text': 1 },
-   { unique: true, sparse: true }
+   { unique: true, sparse: true },
 );
 
 QuizSchema.pre('save', function () {

@@ -28,7 +28,7 @@ export default async (app: Application) => {
          secret: SESSION_SECRET,
          resave: false,
          saveUninitialized: false,
-      })
+      }),
    );
 
    configurePassport(passport);

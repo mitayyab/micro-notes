@@ -3,7 +3,7 @@ import Joi, { AnySchema } from 'joi';
 
 const validate = (
    schema: AnySchema,
-   data: any
+   data: any,
 ): SimplifiedErrors | undefined => {
    const validationResult = schema.validate(data, {
       abortEarly: false,
