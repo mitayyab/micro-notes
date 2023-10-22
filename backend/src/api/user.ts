@@ -6,7 +6,7 @@ import { validateUsing } from '@lib/validator/joi.middleware';
 const registerNewUser: Handler = async (
    req: Request,
    res: Response,
-   next: NextFunction
+   next: NextFunction,
 ) => {
    const inputUser: User = req.body;
 
@@ -17,7 +17,7 @@ const registerNewUser: Handler = async (
          email: inputUser.email.toLowerCase(),
       });
 
-      res.json(user.toDTO());
+      res.json(user.toTransferableObject());
    } catch (e) {
       next(e);
    }

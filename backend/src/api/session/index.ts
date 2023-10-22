@@ -21,7 +21,7 @@ const login: Handler = async (
             if (err) {
                return next(err);
             }
-            return res.json(user.toDTO());
+            return res.json(user.toTransferableObject());
          });
       } else {
          return res.status(401).json({ message: 'Authentication failed' });
