@@ -3,9 +3,12 @@ import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
 import {
    createUserAndLogin,
    currentCookie,
+   expectedQuiz,
    get,
    logoutAndDeleteUser,
    post,
+   put,
+   validQuiz,
 } from '@lib/test/utils';
 import app from 'server';
 import { Type as ErrorType } from '@lib/error/ApiError';
@@ -196,6 +199,47 @@ describe('/quizes', () => {
                },
                message: 'Record with same field already exists',
                type: ErrorType.UNIQUE_FIELD_VIOLATION,
+            });
+         });
+
+         it('should NOT create a new quiz if there are less than 2 answer options within a question', async () => {
+            const invalidTestQuiz = {
+               title: 'something',
+               topics: ['test'],
+               level: 'BEGINNER',
+               questions: [
+                  {
+                     text: 'what am I doing',
+                     answerChoices: [
+                        {
+                           text: 'testing',
+                           correct: true,
+                        },
+                     ],
+                  },
+               ],
+            };
+
+            const res = await post(
+               app,
+               '/quizes',
+               invalidTestQuiz,
+               currentCookie(),
+            );
+
+            expect(res.statusCode).toEqual(400);
+
+            expect(res.body).toEqual({
+               errors: {
+                  questions: [
+                     {
+                        answerChoices:
+                           '"questions[0].answerChoices" must contain at least 2 items',
+                     },
+                  ],
+               },
+               message: 'Invalid request input',
+               type: 'INVALID_INPUT',
             });
          });
 
@@ -444,6 +488,288 @@ describe('/quizes', () => {
          await QuizModel.findByIdAndDelete(testQuiz._id);
 
          await logoutAndDeleteUser(app);
+      });
+   });
+
+   describe('PUT request on quizes/:ID', () => {
+      let testQuiz: any;
+
+      it('should NOT update a quiz if user is NOT Admin', async () => {
+         testQuiz = await QuizModel.create(validQuiz);
+
+         let link = '/quizes/' + testQuiz._id;
+
+         const res = await put(app, link, {});
+
+         expect(res.statusCode).toEqual(401);
+
+         expect(res.body).toEqual({
+            message: 'User needs to login.',
+            type: 'UNAUTHORIZED',
+         });
+
+         await QuizModel.findByIdAndDelete(testQuiz._id);
+      });
+
+      describe('user logged in as Admin', () => {
+         beforeAll(async () => {
+            await createUserAndLogin(app, true);
+         });
+
+         describe('invalid inputs on which PUT request fails to work', () => {
+            beforeAll(async () => {
+               testQuiz = await QuizModel.create(validQuiz);
+            });
+
+            it('should return INPUT ERROR : 400 when data which does not match the schema defined data-type is passed', async () => {
+               let link = '/quizes/' + testQuiz._id;
+
+               const res = await put(
+                  app,
+                  link,
+                  {
+                     title: 1,
+                  },
+                  currentCookie(),
+               );
+
+               expect(res.statusCode).toEqual(400);
+
+               expect(res.body).toEqual({
+                  errors: {
+                     title: '"title" must be a string',
+                  },
+                  message: 'Invalid request input',
+                  type: 'INVALID_INPUT',
+               });
+            });
+
+            it('should return INPUT ERROR : 400 when a question is not passed with atleast 2 answer options', async () => {
+               let link = '/quizes/' + testQuiz._id;
+
+               const res = await put(
+                  app,
+                  link,
+                  {
+                     questions: [
+                        {
+                           text: 'new text',
+                        },
+                     ],
+                  },
+                  currentCookie(),
+               );
+
+               expect(res.statusCode).toEqual(400);
+
+               expect(res.body).toEqual({
+                  errors: {
+                     questions: [
+                        {
+                           answerChoices:
+                              '"questions[0].answerChoices" is required',
+                        },
+                     ],
+                  },
+                  message: 'Invalid request input',
+                  type: 'INVALID_INPUT',
+               });
+            });
+
+            it.skip('should return INPUT ERROR : 400 when a question is not passed with text', async () => {
+               let link = '/quizes/' + testQuiz._id;
+
+               const res = await put(
+                  app,
+                  link,
+                  {
+                     questions: [
+                        {
+                           answerChoices: [
+                              {
+                                 text: 'something',
+                                 correct: false,
+                              },
+                              {
+                                 text: 'nothing',
+                                 correct: false,
+                              },
+                           ],
+                        },
+                     ],
+                  },
+                  currentCookie(),
+               );
+
+               expect(res.statusCode).toEqual(400);
+
+               expect(res.body).toEqual({
+                  errors: {
+                     questions: [
+                        {
+                           text: '"questions[0].text" is required',
+                        },
+                     ],
+                  },
+                  message: 'Invalid request input',
+                  type: 'INVALID_INPUT',
+               });
+            });
+
+            it('should return NOT FOUND : error 404 when in-valid quizID is passed', async () => {
+               const res = await put(app, '/quizes/test', {}, currentCookie());
+
+               expect(res.statusCode).toEqual(404);
+
+               expect(res.body).toEqual({
+                  id: 'test',
+                  message: 'Record with this id does not exist',
+                  type: 'NOT_FOUND',
+               });
+            });
+
+            afterAll(async () => {
+               await QuizModel.findByIdAndDelete(testQuiz._id);
+            });
+         });
+
+         describe('valid inputs on which PUT request works', () => {
+            beforeEach(async () => {
+               testQuiz = await QuizModel.create(validQuiz);
+            });
+
+            it('should return the updated quiz when scalar(title/level) data is passed', async () => {
+               let link = '/quizes/' + testQuiz._id;
+
+               const res = await put(
+                  app,
+                  link,
+                  {
+                     title: 'new title',
+                  },
+                  currentCookie(),
+               );
+
+               expect(res.statusCode).toEqual(200);
+
+               let expectUpdatedQuiz = expectedQuiz;
+               expectUpdatedQuiz.title = 'new title';
+
+               expect(res.body).toEqual({
+                  _id: expect.any(String),
+                  title: 'new title',
+                  topics: ['test'],
+                  level: 'BEGINNER',
+                  questions: [
+                     {
+                        _id: expect.any(String),
+                        text: 'what am I doing',
+                        answerChoices: [
+                           {
+                              _id: expect.any(String),
+                              text: 'testing',
+                              correct: true,
+                           },
+                           {
+                              _id: expect.any(String),
+                              text: 'nothing',
+                              correct: false,
+                           },
+                        ],
+                     },
+                  ],
+               });
+            });
+
+            it('should return the updated quiz when complete collection(topics/questions) is passed', async () => {
+               let link = '/quizes/' + testQuiz._id;
+
+               const res = await put(
+                  app,
+                  link,
+                  {
+                     topics: ['test1', 'test2'],
+                  },
+                  currentCookie(),
+               );
+
+               expect(res.statusCode).toEqual(200);
+
+               expect(res.body).toEqual({
+                  _id: expect.any(String),
+                  title: 'something',
+                  topics: ['test1', 'test2'],
+                  level: 'BEGINNER',
+                  questions: [
+                     {
+                        _id: expect.any(String),
+                        text: 'what am I doing',
+                        answerChoices: [
+                           {
+                              _id: expect.any(String),
+                              text: 'testing',
+                              correct: true,
+                           },
+                           {
+                              _id: expect.any(String),
+                              text: 'nothing',
+                              correct: false,
+                           },
+                        ],
+                     },
+                  ],
+               });
+            });
+
+            it('should return the updated quiz when scalar-data(title/level) and complete-collection(topics/questions) are passed', async () => {
+               let link = '/quizes/' + testQuiz._id;
+
+               const res = await put(
+                  app,
+                  link,
+                  {
+                     title: 'new title',
+                     topics: ['test1', 'test2'],
+                  },
+                  currentCookie(),
+               );
+
+               expect(res.statusCode).toEqual(200);
+
+               expect(res.body).toEqual({
+                  _id: expect.any(String),
+                  title: 'new title',
+                  topics: ['test1', 'test2'],
+                  level: 'BEGINNER',
+                  questions: [
+                     {
+                        _id: expect.any(String),
+                        text: 'what am I doing',
+                        answerChoices: [
+                           {
+                              _id: expect.any(String),
+                              text: 'testing',
+                              correct: true,
+                           },
+                           {
+                              _id: expect.any(String),
+                              text: 'nothing',
+                              correct: false,
+                           },
+                        ],
+                     },
+                  ],
+               });
+            });
+
+            afterEach(async () => {
+               await QuizModel.findByIdAndDelete(testQuiz._id);
+            });
+         });
+
+         afterAll(async () => {
+            await logoutAndDeleteUser(app);
+         });
       });
    });
 });
