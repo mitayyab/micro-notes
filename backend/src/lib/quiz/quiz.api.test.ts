@@ -3,12 +3,13 @@ import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
 import {
    createUserAndLogin,
    currentCookie,
+   get,
    logoutAndDeleteUser,
    post,
 } from '@lib/test/utils';
 import app from 'server';
 import { Type as ErrorType } from '@lib/error/ApiError';
-import { Level, QuizModel } from './quiz.model';
+import { Level, Quiz, QuizModel } from './quiz.model';
 
 describe('/quizes', () => {
    describe('POST Request on /quizes', () => {
@@ -104,7 +105,7 @@ describe('/quizes', () => {
             const invalidTestQuiz = {
                title: 'something',
                topics: ['test'],
-               level: Level.BEGINNER,
+               level: 'BEGINNER',
                questions: [
                   {
                      text: 'what am I doing',
@@ -262,6 +263,105 @@ describe('/quizes', () => {
          afterAll(async () => {
             await logoutAndDeleteUser(app);
          });
+      });
+   });
+
+   describe('GET Request on /quizes/search/:searchString', () => {
+      let testQuiz1: Quiz, testQuiz2: Quiz;
+
+      beforeAll(async () => {
+         const validTestQuiz1 = {
+            title: 'something',
+            topics: ['test'],
+            level: Level.BEGINNER,
+            questions: [
+               {
+                  text: 'what am I doing',
+                  answerChoices: [
+                     {
+                        text: 'testing',
+                        correct: true,
+                     },
+                     {
+                        text: 'nothing',
+                        correct: false,
+                     },
+                  ],
+               },
+            ],
+         };
+
+         const validTestQuiz2 = {
+            title: 'anything',
+            topics: ['alternate test'],
+            level: 'BEGINNER',
+            questions: [
+               {
+                  text: 'what are you doing',
+                  answerChoices: [
+                     {
+                        text: 'testing',
+                        correct: true,
+                     },
+                     {
+                        text: 'nothing',
+                        correct: false,
+                     },
+                  ],
+               },
+            ],
+         };
+
+         testQuiz1 = await QuizModel.create(validTestQuiz1);
+
+         testQuiz2 = await QuizModel.create(validTestQuiz2);
+      });
+
+      it('should return an empty array of quizes when something is not there', async () => {
+         const res = await get(app, '/quizes/search/xyz');
+
+         expect(res.statusCode).toEqual(200);
+         expect(res.body).toEqual([]);
+      });
+
+      it('should return an array of quizes based on a title as searchString ', async () => {
+         const res = await get(app, '/quizes/search/something');
+
+         expect(res.statusCode).toEqual(200);
+         expect(res.body).toEqual([
+            {
+               _id: expect.any(String),
+               numberOfQuestions: 1,
+               title: 'something',
+               topics: ['test'],
+            },
+         ]);
+      });
+
+      it('should return an array of quizes based on a topics as searchString', async () => {
+         const res = await get(app, '/quizes/search/test');
+
+         expect(res.statusCode).toEqual(200);
+         expect(res.body).toEqual([
+            {
+               _id: expect.any(String),
+               numberOfQuestions: 1,
+               title: 'something',
+               topics: ['test'],
+            },
+            {
+               _id: expect.any(String),
+               numberOfQuestions: 1,
+               title: 'anything',
+               topics: ['alternate test'],
+            },
+         ]);
+      });
+
+      afterAll(async () => {
+         await QuizModel.findByIdAndDelete(testQuiz1._id);
+
+         await QuizModel.findByIdAndDelete(testQuiz2._id);
       });
    });
 });
