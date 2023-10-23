@@ -1,5 +1,6 @@
 import request, { Response } from 'supertest';
 import { Application } from 'express';
+import { expect } from '@jest/globals';
 
 import { createUser, deleteUser } from '@lib/user/user.testutils';
 
@@ -83,4 +84,50 @@ export const createUserAndLogin = async (
 export const logoutAndDeleteUser = async (app: Application) => {
    await logout(app);
    await deleteUser(testUser.email);
+};
+
+export const validQuiz = {
+   title: 'something',
+   topics: ['test'],
+   level: 'BEGINNER',
+   questions: [
+      {
+         text: 'what am I doing',
+         answerChoices: [
+            {
+               text: 'testing',
+               correct: true,
+            },
+            {
+               text: 'nothing',
+               correct: false,
+            },
+         ],
+      },
+   ],
+};
+
+export const expectedQuiz = {
+   _id: expect.any(String),
+   title: 'something',
+   topics: ['test'],
+   level: 'BEGINNER',
+   questions: [
+      {
+         _id: expect.any(String),
+         text: 'what am I doing',
+         answerChoices: [
+            {
+               _id: expect.any(String),
+               text: 'testing',
+               correct: true,
+            },
+            {
+               _id: expect.any(String),
+               text: 'nothing',
+               correct: false,
+            },
+         ],
+      },
+   ],
 };
