@@ -34,6 +34,13 @@ export const post = async (
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json');
 
+export const put = async (
+   app: Application,
+   path: string,
+   body: object,
+   cookie: string[] = [],
+): Promise<Response> => request(app).put(path).set('Cookie', cookie).send(body);
+
 export const del = async (
    app: Application,
    path: string,
