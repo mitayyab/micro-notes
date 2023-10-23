@@ -364,4 +364,86 @@ describe('/quizes', () => {
          await QuizModel.findByIdAndDelete(testQuiz2._id);
       });
    });
+
+   describe('GET Request on /quizes/:ID', () => {
+      let testQuiz: Quiz;
+
+      beforeAll(async () => {
+         await createUserAndLogin(app);
+
+         const validTestQuiz = {
+            title: 'something',
+            topics: ['test'],
+            level: 'BEGINNER',
+            questions: [
+               {
+                  text: 'what am I doing',
+                  answerChoices: [
+                     {
+                        text: 'testing',
+                        correct: true,
+                     },
+                     {
+                        text: 'nothing',
+                        correct: false,
+                     },
+                  ],
+               },
+            ],
+         };
+
+         testQuiz = await QuizModel.create(validTestQuiz);
+      });
+
+      it('should return error 404 when in-valid quizID is passed', async () => {
+         const link = '/quizes/test';
+
+         const res = await get(app, link, currentCookie());
+
+         expect(res.statusCode).toEqual(404);
+         expect(res.body).toEqual({
+            id: 'test',
+            message: 'Record with this id does not exist',
+            type: 'NOT_FOUND',
+         });
+      });
+
+      it('should return a quiz when valid quizID is passed', async () => {
+         const link = '/quizes/' + testQuiz._id;
+
+         const res = await get(app, link, currentCookie());
+
+         expect(res.statusCode).toEqual(200);
+         expect(res.body).toEqual({
+            _id: expect.any(String),
+            title: 'something',
+            topics: ['test'],
+            level: 'BEGINNER',
+            questions: [
+               {
+                  _id: expect.any(String),
+                  text: 'what am I doing',
+                  answerChoices: [
+                     {
+                        _id: expect.any(String),
+                        text: 'testing',
+                        correct: true,
+                     },
+                     {
+                        _id: expect.any(String),
+                        text: 'nothing',
+                        correct: false,
+                     },
+                  ],
+               },
+            ],
+         });
+      });
+
+      afterAll(async () => {
+         await QuizModel.findByIdAndDelete(testQuiz._id);
+
+         await logoutAndDeleteUser(app);
+      });
+   });
 });
