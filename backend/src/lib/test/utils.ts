@@ -11,6 +11,16 @@ export const testUser = {
    isAdmin: false,
 };
 
+export const get = async (
+   app: Application,
+   path: string,
+   cookie: string[] = [],
+) =>
+   request(app)
+      .get(path)
+      .set('Cookie', cookie)
+      .set('Accept', 'application/json');
+
 export const post = async (
    app: Application,
    path: string,
