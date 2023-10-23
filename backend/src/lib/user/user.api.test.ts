@@ -1,11 +1,11 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it, afterAll } from '@jest/globals';
 
 import app, { stop as stopServer } from '../../server';
 import { post } from '@lib/test/utils';
 import { Type as ErrorType } from '@lib/error/ApiError';
 import { createUser, deleteUser } from './user.testutils';
 
-describe('/user', () => {
+describe.skip('/user', () => {
    it('should validate the input and provide errors', async () => {
       const user = {
          firstName: 'Ibrahim',

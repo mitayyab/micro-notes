@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
 import {
    createUserAndLogin,
    currentCookie,
-   expectedQuiz,
+   getExpectedQuiz,
    get,
    logoutAndDeleteUser,
    post,
@@ -12,7 +12,7 @@ import {
 } from '@lib/test/utils';
 import app from 'server';
 import { Type as ErrorType } from '@lib/error/ApiError';
-import { Level, Quiz, QuizModel } from './quiz.model';
+import { Quiz, QuizModel } from './quiz.model';
 
 describe('/quizes', () => {
    describe('POST Request on /quizes', () => {
@@ -161,7 +161,7 @@ describe('/quizes', () => {
             const invalidTestQuiz = {
                title: 'something',
                topics: ['test'],
-               level: Level.BEGINNER,
+               level: 'BEGINNER',
                questions: [
                   {
                      text: 'what am I doing',
@@ -247,7 +247,7 @@ describe('/quizes', () => {
             const validTestQuiz = {
                title: 'something',
                topics: ['test1', 'TEST2'],
-               level: Level.BEGINNER,
+               level: 'BEGINNER',
                questions: [
                   {
                      text: 'what am I doing',
@@ -279,7 +279,7 @@ describe('/quizes', () => {
                   _id: expect.any(String),
                   title: 'something',
                   topics: ['test1', 'test2'],
-                  level: Level.BEGINNER,
+                  level: 'BEGINNER',
                   questions: [
                      {
                         _id: expect.any(String),
@@ -317,7 +317,7 @@ describe('/quizes', () => {
          const validTestQuiz1 = {
             title: 'something',
             topics: ['test'],
-            level: Level.BEGINNER,
+            level: 'BEGINNER',
             questions: [
                {
                   text: 'what am I doing',
@@ -492,7 +492,7 @@ describe('/quizes', () => {
    });
 
    describe('PUT request on quizes/:ID', () => {
-      let testQuiz: any;
+      let testQuiz: Quiz;
 
       it('should NOT update a quiz if user is NOT Admin', async () => {
          testQuiz = await QuizModel.create(validQuiz);
@@ -652,9 +652,6 @@ describe('/quizes', () => {
 
                expect(res.statusCode).toEqual(200);
 
-               let expectUpdatedQuiz = expectedQuiz;
-               expectUpdatedQuiz.title = 'new title';
-
                expect(res.body).toEqual({
                   _id: expect.any(String),
                   title: 'new title',
@@ -768,6 +765,212 @@ describe('/quizes', () => {
          });
 
          afterAll(async () => {
+            await logoutAndDeleteUser(app);
+         });
+      });
+   });
+
+   describe('PUT request on quizes/:ID/questions/:questionID', () => {
+      let testQuiz: Quiz;
+
+      it('should NOT update a quiz if user is NOT Admin', async () => {
+         testQuiz = await QuizModel.create(validQuiz);
+
+         let link =
+            '/quizes/' +
+            testQuiz._id +
+            '/questions/' +
+            testQuiz.questions[0]._id;
+
+         try {
+            const res = await put(app, link, {});
+
+            expect(res.statusCode).toEqual(401);
+
+            expect(res.body).toEqual({
+               message: 'User needs to login.',
+               type: 'UNAUTHORIZED',
+            });
+         } finally {
+            await QuizModel.findByIdAndDelete(testQuiz._id);
+         }
+      });
+
+      describe('user logged in as Admin', () => {
+         beforeAll(async () => {
+            await createUserAndLogin(app, true);
+
+            const validQuiz = {
+               title: 'something',
+               topics: ['test'],
+               level: 'BEGINNER',
+               questions: [
+                  {
+                     text: 'what am I doing',
+                     answerChoices: [
+                        {
+                           text: 'testing',
+                           correct: true,
+                        },
+                        {
+                           text: 'nothing',
+                           correct: false,
+                        },
+                     ],
+                  },
+                  {
+                     text: 'what are you doing',
+                     answerChoices: [
+                        {
+                           text: 'testing',
+                           correct: true,
+                        },
+                        {
+                           text: 'nothing',
+                           correct: false,
+                        },
+                     ],
+                  },
+               ],
+            };
+
+            testQuiz = await QuizModel.create(validQuiz);
+         });
+
+         describe('invalid inputs on which PUT request does not works', () => {
+            it('should return INPUT ERROR : 400 when a question is not passed with text', async () => {
+               let link =
+                  '/quizes/' +
+                  testQuiz._id +
+                  '/questions/' +
+                  testQuiz.questions[0]._id;
+
+               const res = await put(
+                  app,
+                  link,
+                  {
+                     answerChoices: [
+                        {
+                           text: 'testing',
+                           correct: true,
+                        },
+                        {
+                           text: 'nothing',
+                           correct: false,
+                        },
+                     ],
+                  },
+                  currentCookie(),
+               );
+
+               let expectUpdatedQuiz = getExpectedQuiz();
+               expectUpdatedQuiz.questions[0].text = 'what are you doing';
+
+               expect(res.statusCode).toEqual(400);
+
+               expect(res.body).toEqual({
+                  errors: {
+                     text: '"text" is required',
+                  },
+                  type: 'INVALID_INPUT',
+               });
+            });
+
+            it('should return INPUT ERROR : 400 when a question is not passed with atleast 2 answer choices', async () => {
+               let link =
+                  '/quizes/' +
+                  testQuiz._id +
+                  '/questions/' +
+                  testQuiz.questions[0]._id;
+
+               const res = await put(
+                  app,
+                  link,
+                  {
+                     text: 'what are you doing',
+                     answerChoices: [
+                        {
+                           text: 'testing',
+                           correct: true,
+                        },
+                     ],
+                  },
+                  currentCookie(),
+               );
+
+               let expectUpdatedQuiz = getExpectedQuiz();
+               expectUpdatedQuiz.questions[0].text = 'what are you doing';
+
+               expect(res.statusCode).toEqual(400);
+
+               expect(res.body).toEqual({
+                  errors: {
+                     answerChoices:
+                        '"answerChoices" must contain at least 2 items',
+                  },
+                  type: 'INVALID_INPUT',
+               });
+            });
+         });
+
+         describe('valid inputs on which PUT request works', () => {
+            it('should return the updated quiz when a valid question is passed', async () => {
+               let link =
+                  '/quizes/' +
+                  testQuiz._id +
+                  '/questions/' +
+                  testQuiz.questions[0]._id;
+
+               const res = await put(
+                  app,
+                  link,
+                  {
+                     text: 'new what are you doing',
+                     answerChoices: [
+                        {
+                           text: 'new testing',
+                           correct: true,
+                        },
+                        {
+                           text: 'new nothing',
+                           correct: false,
+                        },
+                     ],
+                  },
+                  currentCookie(),
+               );
+
+               let expectUpdatedQuiz = getExpectedQuiz();
+               expectUpdatedQuiz.questions[0].text = 'new what are you doing';
+               expectUpdatedQuiz.questions[0].answerChoices[0].text =
+                  'new testing';
+               expectUpdatedQuiz.questions[0].answerChoices[1].text =
+                  'new nothing';
+               expectUpdatedQuiz.questions.push({
+                  _id: expect.any(String),
+                  text: 'what are you doing',
+                  answerChoices: [
+                     {
+                        _id: expect.any(String),
+                        text: 'testing',
+                        correct: true,
+                     },
+                     {
+                        _id: expect.any(String),
+                        text: 'nothing',
+                        correct: false,
+                     },
+                  ],
+               });
+
+               expect(res.statusCode).toEqual(200);
+
+               expect(res.body).toEqual(expectUpdatedQuiz);
+            });
+         });
+
+         afterAll(async () => {
+            await QuizModel.findByIdAndDelete(testQuiz._id);
             await logoutAndDeleteUser(app);
          });
       });

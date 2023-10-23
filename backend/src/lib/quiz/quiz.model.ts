@@ -13,6 +13,7 @@ export interface Quiz extends Document {
    level: Level;
    questions: [
       {
+         _id?: string;
          text: string;
          answerChoices: [
             {

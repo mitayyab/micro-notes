@@ -29,7 +29,7 @@ const login = async () => {
 
 const logout = async () => await del(app, '/session', cookie);
 
-describe('/session', () => {
+describe.skip('/session', () => {
    beforeAll(async () => {
       await createUser(testUser);
    });

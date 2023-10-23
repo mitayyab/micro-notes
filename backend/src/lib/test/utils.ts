@@ -107,27 +107,31 @@ export const validQuiz = {
    ],
 };
 
-export const expectedQuiz = {
-   _id: expect.any(String),
-   title: 'something',
-   topics: ['test'],
-   level: 'BEGINNER',
-   questions: [
-      {
-         _id: expect.any(String),
-         text: 'what am I doing',
-         answerChoices: [
-            {
-               _id: expect.any(String),
-               text: 'testing',
-               correct: true,
-            },
-            {
-               _id: expect.any(String),
-               text: 'nothing',
-               correct: false,
-            },
-         ],
-      },
-   ],
+export const getExpectedQuiz = () => {
+   const expectedQuiz = {
+      _id: expect.any(String),
+      title: 'something',
+      topics: ['test'],
+      level: 'BEGINNER',
+      questions: [
+         {
+            _id: expect.any(String),
+            text: 'what am I doing',
+            answerChoices: [
+               {
+                  _id: expect.any(String),
+                  text: 'testing',
+                  correct: true,
+               },
+               {
+                  _id: expect.any(String),
+                  text: 'nothing',
+                  correct: false,
+               },
+            ],
+         },
+      ],
+   };
+
+   return expectedQuiz;
 };
