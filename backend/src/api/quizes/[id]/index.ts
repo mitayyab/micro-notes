@@ -6,7 +6,7 @@ import {
 } from '@lib/session/session.middleware';
 import { QuizModel } from '@lib/quiz/quiz.model';
 import { validateUsing } from '@lib/validator/joi.middleware';
-import { updateQuizvalidate } from '@lib/quiz/quiz.validator';
+import { updateQuizValidate } from '@lib/quiz/quiz.validator';
 
 const getQuiz: Handler = async (req: Request, res: Response) => {
    const specificQuiz = await QuizModel.findById(req.params.id)
@@ -34,6 +34,6 @@ export const get: Handler[] = [ensureAuthenticated, tryAndCatch(getQuiz)];
 
 export const put: Handler[] = [
    ensureAdmin,
-   validateUsing(updateQuizvalidate),
+   validateUsing(updateQuizValidate),
    tryAndCatch(updateQuiz),
 ];

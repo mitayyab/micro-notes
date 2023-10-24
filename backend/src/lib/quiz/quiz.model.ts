@@ -1,65 +1,20 @@
-import { DuplicateError } from '@lib/error/DuplicateError';
 import mongoose, { Document } from 'mongoose';
+
+import { DuplicateError } from '@lib/error/DuplicateError';
+import { QuestionSchema } from './question/question.model';
+import { Question } from './question/question.model';
 
 export enum Level {
    BEGINNER = 'BEGINNER',
    INTERMEDIATE = 'INTERMEDIATE',
    ADVANCED = 'ADVANCED',
 }
-
 export interface Quiz extends Document {
    title: string;
    topics: string[];
    level: Level;
-   questions: [
-      {
-         _id?: string;
-         text: string;
-         answerChoices: [
-            {
-               text: string;
-               correct: boolean;
-            },
-         ];
-      },
-   ];
+   questions: [Question];
 }
-
-export const answerChoiceSchema = new mongoose.Schema({
-   text: { type: String, required: true },
-   correct: { type: Boolean, required: true },
-});
-
-export const QuestionSchema = new mongoose.Schema({
-   text: { type: String, required: true },
-   answerChoices: [answerChoiceSchema],
-});
-
-QuestionSchema.pre('save', function () {
-   // removing duplicates at application level in a single document as duplicates in single document are not handled by index but in different document yes
-   const answerChoices = this.answerChoices;
-   const text = this.text;
-
-   let dict = {};
-
-   answerChoices.forEach(answerChoice => {
-      if (!dict[answerChoice.text]) dict[answerChoice.text] = true;
-      else {
-         const Key1 = 'questions.answerChoices.text';
-         const Key2 = 'questions.text';
-         const keyValue = {
-            [Key1]: answerChoice.text,
-            [Key2]: text,
-         };
-         throw new DuplicateError(keyValue);
-      }
-   });
-});
-
-QuestionSchema.index(
-   { text: 1, 'answerChoices.text': 1 },
-   { unique: true, sparse: true },
-);
 
 export const schemaDefinition = {
    title: { type: String, required: true },
