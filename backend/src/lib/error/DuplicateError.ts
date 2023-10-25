@@ -5,8 +5,8 @@ export class DuplicateError extends ApiError {
 
    constructor(keyValue: Record<string, any>) {
       super(
-         Type.UNIQUE_FIELD_VOILATION,
-         'Record with same field already exists'
+         Type.UNIQUE_FIELD_VIOLATION,
+         'Record with same field already exists',
       );
 
       this.field = keyValue;

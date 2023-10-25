@@ -15,16 +15,16 @@ const verifyCallback: VerifyFunction = async (email, password, done) => {
          return done(
             new ApiError(
                Type.UNAUTHORIZED,
-               `User with email ${email} not found.`
+               `User with email ${email} not found.`,
             ),
-            false
+            false,
          );
       }
 
       if (!user.matchesPassword(password)) {
          return done(
             new ApiError(Type.UNAUTHORIZED, 'Invalid username or password.'),
-            false
+            false,
          );
       }
 

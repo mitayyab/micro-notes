@@ -1,7 +1,8 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import bcrypt from 'bcryptjs';
+import { NotTransferable } from '@lib/model/NotTransferable';
 
-export interface User extends Document {
+export interface User extends Document, NotTransferable {
    firstName: string;
    lastName: string;
    email: string;
@@ -10,7 +11,6 @@ export interface User extends Document {
    hashed_password: string;
    isAdmin: boolean;
    matchesPassword: (password: string) => boolean;
-   toDTO: () => DTO;
 }
 
 export type DTO = {
@@ -41,7 +41,7 @@ UserSchema.methods.matchesPassword = function (password: string): boolean {
    return bcrypt.compareSync(password, this.hashed_password);
 };
 
-UserSchema.methods.toDTO = function () {
+UserSchema.methods.toTransferableObject = function () {
    return {
       id: this.id,
       firstName: this.firstName,

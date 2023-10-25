@@ -9,8 +9,8 @@ const schema = Joi.object({
    password: Joi.string()
       .pattern(
          new RegExp(
-            '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})'
-         )
+            '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})',
+         ),
       )
       .required()
       .messages({
