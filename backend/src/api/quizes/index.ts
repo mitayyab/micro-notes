@@ -19,7 +19,7 @@ const createQuiz: Handler = async (req: Request, res: Response) => {
       versionKey: false,
    });
 
-   res.json(quiz);
+   res.status(200).json(quiz);
 };
 
 export const post: Handler[] = [
