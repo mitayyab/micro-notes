@@ -4,7 +4,8 @@ import { tryAndCatch } from '@lib/middleware';
 import { QuizModel } from '@lib/quiz/quiz.model';
 import { ensureAdmin } from '@lib/session/session.middleware';
 import { validateUsing } from '@lib/validator/joi.middleware';
-import { updateQuestionValidate } from '@lib/quiz/question/question.validator';
+import { updateQuestionValidate } from '@lib/quiz/quiz.validator';
+// import { updateQuestionValidate } from '@lib/quiz/question/question.validator';
 
 
 const updateQuestion: Handler = async (req: Request, res: Response) => {

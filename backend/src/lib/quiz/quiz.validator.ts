@@ -1,8 +1,32 @@
 import Joi, { ValidationError } from 'joi';
 
-import { Level, Quiz } from './quiz.model';
+import { Level, Question, Quiz } from './quiz.model';
 import { Validator, simplifyJoiError } from '@lib/validator/joi';
-import { questionSchema } from './question/question.validator';
+
+export const questionSchema = Joi.object({
+   text: Joi.string().empty().required(),
+   answerChoices: Joi.array()
+      .items(
+         Joi.object({
+            text: Joi.string().empty().required(),
+            correct: Joi.boolean().required(),
+         }),
+      )
+      .min(2)
+      .required(),
+});
+
+export const updateQuestionValidate: Validator<Question> = (
+   question: Question,
+) => {
+   const validationResult = questionSchema.validate(question, {
+      abortEarly: false,
+   });
+   const error: ValidationError = validationResult.error!;
+
+   return simplifyJoiError(error);
+};
+
 
 const schema = Joi.object({
    title: Joi.string().alter({
@@ -31,8 +55,8 @@ const schema = Joi.object({
       }),
 });
 
-const postSchema = schema.tailor(['post']);
-const putSchema = schema.tailor(['put']);
+export const postSchema = schema.tailor(['post']);
+export const putSchema = schema.tailor(['put']);
 
 export const validate: Validator<Quiz> = (quiz: Quiz) => {
    const validationResult = postSchema.validate(quiz, { abortEarly: false });

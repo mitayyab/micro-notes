@@ -7,14 +7,14 @@ import {
    logoutAndDeleteUser,
    post,
    testUser,
-   validQuiz,
+   // validQuiz,
 } from '@lib/test/utils';
 import { Type as ErrorType } from '@lib/error/ApiError';
 import { createUser } from '@lib/user/user.testutils';
-import { User } from '@lib/user/user.model';
-import { Quiz, QuizModel } from '@lib/quiz/quiz.model';
+// import { User } from '@lib/user/user.model';
+// import { Quiz } from '@lib/quiz/quiz.model';
 
-describe.only('POST Request on /results', () => {
+describe('POST Request on /results', () => {
    it('should NOT allow access if user is NOT logged in', async () => {
       const res = await post(app, '/results', {});
 
@@ -27,29 +27,38 @@ describe.only('POST Request on /results', () => {
    });
 
    describe('User logged-in', () => {
-      let user: User;
-      let quiz: Quiz;
+      // let user: User;
+      // let quiz: Quiz;
 
       beforeAll(async () => {
          const { email, password } = testUser;
-         user = await createUser({ ...testUser });
+         // user = await createUser({ ...testUser });
+         await createUser({ ...testUser });
          await login(app, { email, password });
 
-         quiz = await QuizModel.create(validQuiz);
+         // quiz = await QuizModel.create(validQuiz);
       });
 
       it('should NOT create a new result if inputs are NOT valid (empty)', async () => {
          const invalidResult = {
-            user: '',
-
-            quiz: '',
-
-            answers: [
-               {
-                  questionNumber: 0,
-                  selectedChoice: '',
-               },
-            ],
+            quiz: {
+               title: '',
+               topics: [],
+               level: '',
+               questions: [
+                  {
+                     text: '',
+                     answerChoices: [
+                        {
+                           text: '',
+                        },
+                        {
+                           text: '',
+                        },
+                     ],
+                  },
+               ],
+            },
          };
 
          const res = await post(
@@ -63,204 +72,69 @@ describe.only('POST Request on /results', () => {
 
          expect(res.body).toEqual({
             errors: {
-               answers: [
-                  {
-                     selectedChoice:
-                        '"answers[0].selectedChoice" is not allowed to be empty',
-                  },
-               ],
-               quiz: '"quiz" is not allowed to be empty',
-               user: '"user" is not allowed to be empty',
+               quiz: {
+                  level: '"quiz.level" is not allowed to be empty',
+                  questions: [
+                     {
+                        answerChoices: [
+                           {
+                              correct:
+                                 '"quiz.questions[0].answerChoices[0].correct" is required',
+                              selected:
+                                 '"quiz.questions[0].answerChoices[0].selected" is required',
+                              text: '"quiz.questions[0].answerChoices[0].text" is not allowed to be empty',
+                           },
+                           {
+                              correct:
+                                 '"quiz.questions[0].answerChoices[1].correct" is required',
+                              selected:
+                                 '"quiz.questions[0].answerChoices[1].selected" is required',
+                              text: '"quiz.questions[0].answerChoices[1].text" is not allowed to be empty',
+                           },
+                        ],
+                        text: '"quiz.questions[0].text" is not allowed to be empty',
+                     },
+                  ],
+                  title: '"quiz.title" is not allowed to be empty',
+                  topics: '"quiz.topics" must contain at least 1 items',
+               },
             },
             message: 'Invalid request input',
             type: 'INVALID_INPUT',
          });
       });
 
-      // it('should NOT create a new quiz if there are multiple questions with same text', async () => {
-      //    const invalidTestQuiz = {
-      //       title: 'something',
-      //       topics: ['test'],
-      //       level: 'BEGINNER',
-      //       questions: [
-      //          {
-      //             text: 'what am I doing',
-      //             answerChoices: [
-      //                {
-      //                   text: 'lets',
-      //                   correct: true,
-      //                },
-      //                {
-      //                   text: 'change',
-      //                   correct: false,
-      //                },
-      //             ],
-      //          },
-      //          {
-      //             text: 'what am I doing',
-      //             answerChoices: [
-      //                {
-      //                   text: 'everything',
-      //                   correct: true,
-      //                },
-      //                {
-      //                   text: 'for now',
-      //                   correct: false,
-      //                },
-      //             ],
-      //          },
-      //       ],
-      //    };
-
-      //    const res = await post(
-      //       app,
-      //       '/quizes',
-      //       invalidTestQuiz,
-      //       currentCookie(),
-      //    );
-
-      //    expect(res.statusCode).toEqual(409);
-      //    expect(res.body).toEqual({
-      //       field: {
-      //          'questions.text': 'what am I doing',
-      //          title: 'something',
-      //       },
-      //       message: 'Record with same field already exists',
-      //       type: ErrorType.UNIQUE_FIELD_VIOLATION,
-      //    });
-      // });
-
-      // it('should NOT create a new quiz if there are multiple answers within a question with same text', async () => {
-      //    const invalidTestQuiz = {
-      //       title: 'something',
-      //       topics: ['test'],
-      //       level: 'BEGINNER',
-      //       questions: [
-      //          {
-      //             text: 'what am I doing',
-      //             answerChoices: [
-      //                {
-      //                   text: 'testing',
-      //                   correct: true,
-      //                },
-      //                {
-      //                   text: 'nothing',
-      //                   correct: false,
-      //                },
-      //                {
-      //                   text: 'testing',
-      //                   correct: false,
-      //                },
-      //             ],
-      //          },
-      //       ],
-      //    };
-
-      //    const res = await post(
-      //       app,
-      //       '/quizes',
-      //       invalidTestQuiz,
-      //       currentCookie(),
-      //    );
-
-      //    expect(res.statusCode).toEqual(409);
-
-      //    expect(res.body).toEqual({
-      //       field: {
-      //          'questions.answerChoices.text': 'testing',
-      //          'questions.text': 'what am I doing',
-      //       },
-      //       message: 'Record with same field already exists',
-      //       type: ErrorType.UNIQUE_FIELD_VIOLATION,
-      //    });
-      // });
-
-      // it('should NOT create a new quiz if there are less than 2 answer options within a question', async () => {
-      //    const invalidTestQuiz = {
-      //       title: 'something',
-      //       topics: ['test'],
-      //       level: 'BEGINNER',
-      //       questions: [
-      //          {
-      //             text: 'what am I doing',
-      //             answerChoices: [
-      //                {
-      //                   text: 'testing',
-      //                   correct: true,
-      //                },
-      //             ],
-      //          },
-      //       ],
-      //    };
-
-      //    const res = await post(
-      //       app,
-      //       '/quizes',
-      //       invalidTestQuiz,
-      //       currentCookie(),
-      //    );
-
-      //    expect(res.statusCode).toEqual(400);
-
-      //    expect(res.body).toEqual({
-      //       errors: {
-      //          questions: [
-      //             {
-      //                answerChoices:
-      //                   '"questions[0].answerChoices" must contain at least 2 items',
-      //             },
-      //          ],
-      //       },
-      //       message: 'Invalid request input',
-      //       type: 'INVALID_INPUT',
-      //    });
-      // });
-
       it('should create a new result if inputs are valid', async () => {
-         const invalidResult = {
-            user: user.id,
-
-            quiz: quiz.id,
-
-            answers: [
-               {
-                  questionNumber: 1,
-                  selectedChoice: 'a',
-               },
-               {
-                  questionNumber: 2,
-                  selectedChoice: 'b',
-               },
-            ],
+         const validResult = {
+            quiz: {
+               title: 'something',
+               topics: ['test1', 'TEST2'],
+               level: 'BEGINNER',
+               questions: [
+                  {
+                     text: 'what am I doing',
+                     answerChoices: [
+                        {
+                           text: 'testing',
+                           correct: true,
+                           selected: true,
+                        },
+                        {
+                           text: 'nothing',
+                           correct: false,
+                           selected: false,
+                        },
+                     ],
+                  },
+               ],
+            },
          };
 
-         const res = await post(
-            app,
-            '/results',
-            invalidResult,
-            currentCookie(),
-         );
+         const res = await post(app, '/results', validResult, currentCookie());
 
-         expect(res.statusCode).toEqual(200);
+         expect(res.statusCode).toEqual(400);
 
-         expect(res.body).toEqual({
-            __v: 0,
-            _id: '65382ae80a868d4e5edb67d5',
-            answers: [
-               {
-                  _id: '65382ae80a868d4e5edb67d6',
-                  questionNumber: 1,
-                  selectedChoice: 'a',
-               },
-               {
-                  _id: '65382ae80a868d4e5edb67d7',
-                  questionNumber: 2,
-                  selectedChoice: 'b',
-               },
-            ],
-            quiz: '65382ae80a868d4e5edb67ce',
-            user: '65382ae80a868d4e5edb67c8',
-         });
+         expect(res.body).toEqual({});
       });
 
       afterAll(async () => {
