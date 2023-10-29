@@ -7,12 +7,10 @@ import {
    logoutAndDeleteUser,
    post,
    testUser,
-   // validQuiz,
 } from '@lib/test/utils';
 import { Type as ErrorType } from '@lib/error/ApiError';
+import { ResultModel } from './result.model';
 import { createUser } from '@lib/user/user.testutils';
-// import { User } from '@lib/user/user.model';
-// import { Quiz } from '@lib/quiz/quiz.model';
 
 describe('POST Request on /results', () => {
    it('should NOT allow access if user is NOT logged in', async () => {
@@ -27,12 +25,8 @@ describe('POST Request on /results', () => {
    });
 
    describe('User logged-in', () => {
-      // let user: User;
-      // let quiz: Quiz;
-
       beforeAll(async () => {
          const { email, password } = testUser;
-         // user = await createUser({ ...testUser });
          await createUser({ ...testUser });
          await login(app, { email, password });
 
@@ -157,6 +151,8 @@ describe('POST Request on /results', () => {
             },
             user: expect.any(String),
          });
+
+         ResultModel.findByIdAndDelete(res.body._id);
       });
 
       afterAll(async () => {
@@ -164,3 +160,70 @@ describe('POST Request on /results', () => {
       });
    });
 });
+
+// describe('GET Request on /results', () => {
+//    it('should NOT allow access if user is NOT logged in', async () => {
+//       const res = await post(app, '/results', {});
+
+//       expect(res.statusCode).toEqual(401);
+
+//       expect(res.body).toEqual({
+//          message: 'User needs to login.',
+//          type: ErrorType.UNAUTHORIZED,
+//       });
+//    });
+
+//    describe('User logged-in', () => {
+//       // let user: User;
+//       // let quiz: Quiz;
+
+//       beforeAll(async () => {
+//          const { email, password } = testUser;
+//          // user = await createUser({ ...testUser });
+//          await createUser({ ...testUser });
+//          await login(app, { email, password });
+
+//          // quiz = await QuizModel.create(validQuiz);
+//       });
+
+//       it('should return all results of logged-in User', async () => {
+//          const res = await post(app, '/results', validResult, currentCookie());
+
+//          expect(res.statusCode).toEqual(200);
+
+//          expect(res.body).toEqual({
+//             _id: expect.any(String),
+//             quiz: {
+//                level: 'BEGINNER',
+//                questions: [
+//                   {
+//                      _id: expect.any(String),
+//                      answerChoices: [
+//                         {
+//                            _id: expect.any(String),
+//                            correct: true,
+//                            selected: true,
+//                            text: 'testing',
+//                         },
+//                         {
+//                            _id: expect.any(String),
+//                            correct: false,
+//                            selected: false,
+//                            text: 'nothing',
+//                         },
+//                      ],
+//                      text: 'what am I doing',
+//                   },
+//                ],
+//                title: 'something',
+//                topics: ['test1', 'test2'],
+//             },
+//             user: expect.any(String),
+//          });
+//       });
+
+//       afterAll(async () => {
+//          await logoutAndDeleteUser(app);
+//       });
+//    });
+// });
