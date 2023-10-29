@@ -106,33 +106,31 @@ describe('POST Request on /results', () => {
 
       it('should create a new result if inputs are valid', async () => {
          const validResult = {
-            quiz: {
-               title: 'something',
-               topics: ['test1', 'TEST2'],
-               level: 'BEGINNER',
-               questions: [
-                  {
-                     text: 'what am I doing',
-                     answerChoices: [
-                        {
-                           text: 'testing',
-                           correct: true,
-                           selected: true,
-                        },
-                        {
-                           text: 'nothing',
-                           correct: false,
-                           selected: false,
-                        },
-                     ],
-                  },
-               ],
-            },
+            title: 'something',
+            topics: ['test1', 'TEST2'],
+            level: 'BEGINNER',
+            questions: [
+               {
+                  text: 'what am I doing',
+                  answerChoices: [
+                     {
+                        text: 'testing',
+                        correct: true,
+                        selected: true,
+                     },
+                     {
+                        text: 'nothing',
+                        correct: false,
+                        selected: false,
+                     },
+                  ],
+               },
+            ],
          };
 
          const res = await post(app, '/results', validResult, currentCookie());
 
-         expect(res.statusCode).toEqual(400);
+         expect(res.statusCode).toEqual(200);
 
          expect(res.body).toEqual({});
       });

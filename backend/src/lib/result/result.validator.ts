@@ -41,7 +41,7 @@ export const questionSchema = Joi.object({
       .required(),
 });
 
-const quizSchema = Joi.object({
+const resultSchema = Joi.object({
    title: Joi.string().empty().required(),
    topics: Joi.array().items(Joi.string()).min(1).required(),
    level: Joi.string()
@@ -51,9 +51,9 @@ const quizSchema = Joi.object({
    questions: Joi.array().items(questionSchema).min(1).required(),
 });
 
-const resultSchema = Joi.object({
-   quiz: quizSchema,
-});
+// const resultSchema = Joi.object({
+//    quiz: quizSchema,
+// });
 
 export const createResultValidate: Validator<Result> = (result: Result) => {
    const validationResult = resultSchema.validate(result, {
