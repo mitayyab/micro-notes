@@ -1,4 +1,4 @@
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from '@jest/globals';
+import { beforeAll, describe, expect, it } from '@jest/globals';
 
 import {
    createUserAndLogin,
@@ -13,7 +13,7 @@ import app from 'server';
 import { Type as ErrorType } from '@lib/error/ApiError';
 import { Quiz, QuizModel } from './quiz.model';
 
-describe.skip('/quizes', () => {
+describe('/quizes', () => {
    describe('POST Request on /quizes', () => {
       it('should NOT allow access if user is NOT logged in', async () => {
          const res = await post(app, '/quizes', {});
@@ -543,7 +543,7 @@ describe.skip('/quizes', () => {
                });
             });
 
-            it('should return INPUT ERROR : 400 when a question is not passed with atleast 2 answer options', async () => {
+            it('should return INPUT ERROR : 400 when a question is not passed with at least 2 answer options', async () => {
                let link = '/quizes/' + testQuiz._id;
 
                const res = await put(

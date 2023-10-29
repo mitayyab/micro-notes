@@ -30,7 +30,7 @@ export const answerChoiceSchema = new mongoose.Schema(
 
 export const QuestionSchemaDefinition = {
    text: { type: String, required: true },
-   answerChoices: [answerChoiceSchemaDefinition],
+   answerChoices: [answerChoiceSchema],
 };
 
 export const QuestionSchema = new mongoose.Schema(QuestionSchemaDefinition);
@@ -59,8 +59,6 @@ QuestionSchema.index(
    { text: 1, 'answerChoices.text': 1 },
    { unique: true, sparse: true },
 );
-
-
 export interface Quiz extends Document {
    title: string;
    topics: string[];
@@ -76,7 +74,7 @@ export const schemaDefinition = {
       enum: Level,
       required: true,
    },
-   questions: [QuestionSchemaDefinition],
+   questions: [QuestionSchema],
 };
 
 const QuizSchema = new mongoose.Schema(schemaDefinition);
@@ -87,7 +85,6 @@ QuizSchema.index(
 );
 
 QuizSchema.pre('save', function () {
-   // removing duplicates at application level in a single document as duplicates in single document are not handled by index but in different document yes https://www.mongodb.com/community/forums/t/unique-indexes-on-embedded-documents/16825 https://jira.mongodb.org/browse/SERVER-1068?focusedCommentId=3195941&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#comment-3195941 https://www.mongodb.com/docs/manual/core/schema-validation/specify-query-expression-rules/#learn-more
    const questions = this.questions;
    const title = this.title;
 
