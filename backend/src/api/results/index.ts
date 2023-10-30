@@ -6,6 +6,7 @@ import { createResultValidate } from '@lib/result/result.validator';
 import { tryAndCatch } from '@lib/middleware';
 import { Result, ResultModel } from '@lib/result/result.model';
 import { User } from '@lib/user/user.model';
+import { Quiz, QuizModel } from '@lib/quiz/quiz.model';
 
 // const createResult: Handler = async (req: Request, res: Response) => {
 //    const solvedQuiz = req.body;
@@ -27,16 +28,30 @@ import { User } from '@lib/user/user.model';
 // };
 //--------------------------------------------------------------------------------
 const createResult: Handler = async (req: Request, res: Response) => {
-   const solvedQuiz = req.body;
+   let attemptedQuiz: Quiz = await QuizModel.findById(
+      req.body.quizId,
+   ).setOptions({
+      lean: true,
+   });
+
+   const selectedAnswerChoices = req.body.attemptedQuestions;
+
+   attemptedQuiz.questions = attemptedQuiz.questions.map((question, index) => {
+      question.answerChoices = question.answerChoices.map(answerChoice => {
+         if (answerChoice.text === selectedAnswerChoices[index]) {
+            return Object.assign({ selected: true }, answerChoice);
+         } else {
+            return Object.assign({ selected: true }, answerChoice);
+         }
+      });
+
+      return question;
+   });
 
    const result: Result = (
       await ResultModel.create({
          user: (req.user as User)._id,
-         quiz: {
-            ...solvedQuiz,
-            title: solvedQuiz.title.toLowerCase(),
-            topics: solvedQuiz.topics.map(topic => topic.toLowerCase()),
-         },
+         quiz: attemptedQuiz,
       })
    ).toObject({
       versionKey: false,
@@ -45,16 +60,8 @@ const createResult: Handler = async (req: Request, res: Response) => {
    res.status(200).json(result);
 };
 
-//--------------------------------------------------------------------------------
-
-// const getSummarizedResults = async (req: Request, res: Response) => {
-//    const summaizedResults: [{ title: string, topics: [string], total: number, correct: number }] = await ResultModel.find();
-// }
-
 export const post: Handler[] = [
    ensureAuthenticated,
    validateUsing(createResultValidate),
    tryAndCatch(createResult),
 ];
-
-// export const get: Handler[] = [ensureAuthenticated, tryAndCatch(getSummarizedResults)];

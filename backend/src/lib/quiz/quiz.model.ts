@@ -11,12 +11,10 @@ export enum Level {
 export interface Question {
    _id?: string;
    text: string;
-   answerChoices: [
-      {
-         text: string;
-         correct: boolean;
-      },
-   ];
+   answerChoices: {
+      text: string;
+      correct: boolean;
+   }[];
 }
 
 export const answerChoiceSchemaDefinition = {
@@ -63,7 +61,7 @@ export interface Quiz extends Document {
    title: string;
    topics: string[];
    level: Level;
-   questions: [Question];
+   questions: Question[];
 }
 
 export const schemaDefinition = {
