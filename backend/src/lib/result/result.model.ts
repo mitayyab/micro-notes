@@ -24,6 +24,7 @@ export interface attemptedQuiz extends Omit<Quiz, 'questions'> {
 export interface Result extends Document {
    user: { _id?: string };
    quiz: attemptedQuiz;
+   score: number;
 }
 
 export const attemptedAnswerChoicesSchema = Object.assign(
@@ -39,19 +40,15 @@ attemptedQuestionSchema.answerChoices = Object.assign(
    [attemptedAnswerChoicesSchema],
 );
 
-export let attemptedQuizSchema = Object.assign(quizSchemaDefinition);
+export let attemptedQuizSchema = Object.assign({_id: String}, quizSchemaDefinition);
 attemptedQuizSchema.questions = Object.assign([], [attemptedQuestionSchema]);
 
 export const resultSchemaDefinition = {
    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
    quiz: attemptedQuizSchema,
+   score: { type: Number, required: true },
 };
 
 export const ResultSchema = new mongoose.Schema(resultSchemaDefinition);
-
-ResultSchema.index(
-   { user: 1, 'quiz.title': 1 },
-   { unique: true, sparse: true },
-);
 
 export const ResultModel = mongoose.model<Result>('Result', ResultSchema);
