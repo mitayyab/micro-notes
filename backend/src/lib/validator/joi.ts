@@ -12,7 +12,7 @@ const initialize = (pathHead: string | number) =>
 const buildNestedError = (
    path: (string | number)[],
    message: string,
-   simplified: SimplifiedErrors = {}
+   simplified: SimplifiedErrors = {},
 ): SimplifiedErrors => {
    const [head, ...tail] = path;
 
@@ -22,7 +22,7 @@ const buildNestedError = (
          : buildNestedError(
               tail,
               message,
-              simplified[head] || initialize(tail[0])
+              simplified[head] || initialize(tail[0]),
            );
    return simplified;
 };
@@ -32,6 +32,6 @@ export const simplifyJoiError = (error: ValidationError): SimplifiedErrors => {
       (simplified: SimplifiedErrors, detail: ValidationErrorItem) => {
          return buildNestedError(detail.path, detail.message, simplified);
       },
-      initialize(error?.details[0].path[0])
+      initialize(error?.details[0].path[0]),
    );
 };
